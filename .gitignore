@@ -1,3 +1,15 @@
+# Ignore folders
+logs/
+data/sample/
+data/*.h5
+data/*.weights
+
+# Auto generated
+.idea/
+*.pyc
+*.xml
+*.iml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
