@@ -15,16 +15,17 @@
 around view image
 
 - [Research Review on Parking Space Detection Method](https://www.mdpi.com/2073-8994/13/1/128/pdf)
-- [Parking Slot Detection on Around-View Images Using DCNN](https://www.frontiersin.org/articles/10.3389/fnbot.2020.00046/full)
 - [Vacant Parking Slot Detection in the Around View Image Based on Deep Learning](https://www.mdpi.com/1424-8220/20/7/2138/htm)
+- [Parking Slot Detection on Around-View Images Using DCNN](https://www.frontiersin.org/articles/10.3389/fnbot.2020.00046/full)
+- [Vision-Based Parking-Slot Detection: A DCNN-Based Approach and a Large-Scale Benchmark Dataset](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8412601)
 - [Real Time Detection Algorithm of Parking Slot Based on Deep Learning and Fisheye Image](https://iopscience.iop.org/article/10.1088/1742-6596/1518/1/012037/pdf)
 - [A Deep-Learning Approach for Parking Slot Detection on Surround-View Images](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8813777)
-- [Automated Parking Space Detection Using Convolutional Neural Networks](https://arxiv.org/pdf/2106.07228.pdf)
 - [Context-Based Parking Slot Detection With a Realistic Dataset](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9199853)
 
 parking lot image
 
 - [Automated Vehicle Parking Slot Detection System Using Deep Learning](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9076491&tag=1)
+- [Automated Parking Space Detection Using Convolutional Neural Networks](https://arxiv.org/pdf/2106.07228.pdf)
 - [An Elaborative Study of Smart Parking Systems](https://www.ijert.org/research/an-elaborative-study-of-smart-parking-systems-IJERTV10IS100056.pdf)
 - [Autonomous Parking-Lots Detection with Multi-Sensor Data Fusion](https://www.techscience.com/cmc/v66n2/40666)
 - [Automatic Parking System Based on Improved Neural Network Algorithm and Intelligent Image Analysis](https://downloads.hindawi.com/journals/cin/2021/4391864.pdf)
@@ -55,5 +56,5 @@ parking lot image
 ## Dataset
 around view image
 
-- [Tongji Parking-slot Dataset 2.0](https://drive.google.com/file/d/1i1pSnkIRyTgt6kmWr_sN6jrasX2HngWc/)
+- [Tongji Parking-slot Dataset 2.0: A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
 - [Context-Based Parking Slot Detect Dataset](https://github.com/dohoseok/context-based-parking-slot-detect)
