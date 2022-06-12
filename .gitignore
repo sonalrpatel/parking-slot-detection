@@ -9,6 +9,8 @@ data/*.weights
 *.pyc
 *.xml
 *.iml
+*.bkp
+*.dtmp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

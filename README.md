@@ -1,17 +1,22 @@
 # parking-slot-detection
 
-[Paper](#Paper)
+[Introduction](#Introduction)
 
-[Code](#Code)
+[References](#References)
 
-[Github](#Github)
+- [Paper](#Paper)
+- [Github](#Github)
+- [Blog](#Blog)
+- [Dataset](#Dataset)
 
-[Blog](#Blog)
+## Introduction
 
-[Dataset](#Dataset)
+This repository is an implementation of parking slot detection in the around view image based on deep learning.
+The implementation is based on following [References](#References).
 
+## References
 
-## Paper
+### Paper
 around view image
 
 - [Research Review on Parking Space Detection Method](https://www.mdpi.com/2073-8994/13/1/128/pdf)
@@ -21,6 +26,8 @@ around view image
 - [Real Time Detection Algorithm of Parking Slot Based on Deep Learning and Fisheye Image](https://iopscience.iop.org/article/10.1088/1742-6596/1518/1/012037/pdf)
 - [A Deep-Learning Approach for Parking Slot Detection on Surround-View Images](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8813777)
 - [Context-Based Parking Slot Detection With a Realistic Dataset](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9199853)
+- [End to End Trainable One Stage Parking Slot Detection Integrating Global and Local Information](https://arxiv.org/ftp/arxiv/papers/2003/2003.02445.pdf)
+- [PSDet: Efficient and Universal Parking Slot Detection](https://arxiv.org/pdf/2005.05528.pdf)
 
 parking lot image
 
@@ -30,21 +37,25 @@ parking lot image
 - [Autonomous Parking-Lots Detection with Multi-Sensor Data Fusion](https://www.techscience.com/cmc/v66n2/40666)
 - [Automatic Parking System Based on Improved Neural Network Algorithm and Intelligent Image Analysis](https://downloads.hindawi.com/journals/cin/2021/4391864.pdf)
 
-## Code
-around view image
-
-- [Vision-based Parking-slot Detection: A DCNN-based Approach and A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
-
-## Github
+### Github
 around view image
 
 - [awesome-parking-slot-detection](https://github.com/lymhust/awesome-parking-slot-detection)
+- [VPS-Net](https://github.com/weili1457355863/VPS-Net)
 - [context-based-parking-slot-detect](https://github.com/dohoseok/context-based-parking-slot-detect)
 - [Parking-slot-detection](https://github.com/wuzzh/Parking-slot-detection)
 - [Parking-slot-dataset](https://github.com/wuzzh/Parking-slot-dataset)
 - [MarkToolForParkingLotPoint](https://github.com/Teoge/MarkToolForParkingLotPoint)
 
-## Blog
+object detection using yolo
+
+- [object-detection-yolov3](https://github.com/sonalrpatel/object-detection-yolo)
+
+### Blog
+around view image
+
+- [Vision-based Parking-slot Detection: A DCNN-based Approach and A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
+
 parking lot image
 
 - [Searching for a Parking Spot? AI Got It](https://blogs.nvidia.com/blog/2019/09/11/drive-labs-ai-parking/)
@@ -53,7 +64,7 @@ parking lot image
 - [Parking Space Detection Using Deep Learning](https://medium.com/the-research-nest/parking-space-detection-using-deep-learning-9fc99a63875e)
 - [Parking Occupancy Detection Using AI and ML](https://visionify.ai/parking-occupancy-detection-using-ai-ml/)
 
-## Dataset
+### Dataset
 around view image
 
 - [Tongji Parking-slot Dataset 2.0: A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
