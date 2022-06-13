@@ -1,0 +1,4 @@
+T_or_L_shape_mark
+Right_angle_head
+Acute_angle_head
+Obtuse_angle_head
