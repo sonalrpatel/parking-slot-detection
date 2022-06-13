@@ -7,8 +7,8 @@ from tqdm import tqdm
 
 WIDTH_MARK = 50
 HEIGHT_MARK = 50
-deltaWIDTH_HEAD = 120
-deltaHEIGHT_HEAD = 120
+deltaWIDTH_HEAD = 40
+deltaHEIGHT_HEAD = 40
 
 parser = argparse.ArgumentParser(description='Converting the ps labels from mat into a single annotation text file.')
 parser.add_argument('data_path', help='Path to the folder containing the images.')
@@ -63,6 +63,65 @@ def head2bbox(slot, marks):
     return head_bbox
 
 
+def head2bbox2(slot, marks):
+    p1x, p1y = marks[slot[0] - 1]
+    p2x, p2y = marks[slot[1] - 1]
+
+    # Right and Left points identification
+    if abs(p1x - p2x) > 0.1:
+        if p1x > p2x:
+            pRx, pRy = p1x, p1y
+            pLx, pLy = p2x, p2y
+        if p1x < p2x:
+            pRx, pRy = p2x, p2y
+            pLx, pLy = p1x, p1y
+    else:
+        if p1y < p2y:
+            pRx, pRy = p1x, p1y
+            pLx, pLy = p2x, p2y
+        else:
+            pRx, pRy = p2x, p2y
+            pLx, pLy = p1x, p1y
+
+    # Slope calculation
+    if abs(pRx - pLx) > 0.1:
+        slope = (pRy - pLy) / (pRx - pLx)
+    else:
+        slope = 0
+
+    # Bounding box calculation
+    if slope > 0:
+        pRRx = pRx + deltaWIDTH_HEAD
+        pRRy = pRy + deltaHEIGHT_HEAD
+        pLLx = (pLx - deltaWIDTH_HEAD) if (pLx - deltaWIDTH_HEAD) > 0 else 0
+        pLLy = (pLy - deltaHEIGHT_HEAD) if (pLy - deltaHEIGHT_HEAD) > 0 else 0
+    else:  # slope < 0 or == 0
+        pRRx = pRx + deltaWIDTH_HEAD
+        pRRy = (pRy - deltaHEIGHT_HEAD) if (pRy - deltaHEIGHT_HEAD) > 0 else 0
+        pLLx = (pLx - deltaWIDTH_HEAD) if (pLx - deltaWIDTH_HEAD) > 0 else 0
+        pLLy = pLy + deltaHEIGHT_HEAD
+
+    head_bbox = [0] * 5
+    # x-min
+    head_bbox[0] = int(min(pRRx, pLLx))
+    # y-min
+    head_bbox[1] = int(min(pRRy, pLLy))
+    # x-max
+    head_bbox[2] = int(max(pRRx, pLLx))
+    # y-max
+    head_bbox[3] = int(max(pRRy, pLLy))
+
+    # class = 1 for right-angle head, 2 for acute-angle and 3 for obtuse-angle
+    if slot[3] > 90:
+        head_bbox[4] = 3
+    elif slot[3] < 90:
+        head_bbox[4] = 2
+    else:
+        head_bbox[4] = 1
+
+    return head_bbox
+
+
 # %%
 def _main(args):
     images = glob.glob(args.data_path + "*.jpg")
@@ -75,7 +134,7 @@ def _main(args):
         for mark in mat['marks']:
             label.append(mark2bbox(mark))
         for slot in mat['slots']:
-            label.append(head2bbox(slot, mat['marks']))
+            label.append(head2bbox2(slot, mat['marks']))
 
         # <file path> <x-min> <y-min> <x-max> <y-max> <object class>
         label_str = " ".join([str(l).replace("[", "").replace("]", "").replace(" ", "") for l in label])
