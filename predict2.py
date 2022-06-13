@@ -189,10 +189,10 @@ class YoloDecode(object):
         # =====================================================================
         #   Image drawing
         # =====================================================================
-        for i, c in list(enumerate(out_classes)):
+        for e, c in list(enumerate(out_classes)):
             predicted_class = self.class_names[int(c)]
-            box = out_boxes[i]
-            score = out_scores[i]
+            box = out_boxes[e]
+            score = out_scores[e]
 
             top, left, bottom, right = box
 

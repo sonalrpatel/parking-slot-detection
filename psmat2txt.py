@@ -5,14 +5,14 @@ import argparse
 from PIL import Image
 from tqdm import tqdm
 
-WIDTH_MARK = 40
-HEIGHT_MARK = 40
-deltaWIDTH_HEAD = 100
-deltaHEIGHT_HEAD = 100
+WIDTH_MARK = 50
+HEIGHT_MARK = 50
+deltaWIDTH_HEAD = 120
+deltaHEIGHT_HEAD = 120
 
 parser = argparse.ArgumentParser(description='Converting the ps labels from mat into a single annotation text file.')
 parser.add_argument('data_path', help='Path to the folder containing the images.')
-parser.add_argument('annotation_text_path', help='Path to the folder to store the generated annotation text.')
+parser.add_argument('annotation_txt_path', help='Path to the folder to store the generated annotation text.')
 
 
 def mark2bbox(mark):
@@ -83,7 +83,7 @@ def _main(args):
 
         annotation_lines.append(annotation_line)
 
-    with open(args.annotation_text_path, 'a') as f:
+    with open(args.annotation_txt_path, 'a') as f:
         for line in tqdm(annotation_lines):
             f.write(line)
             f.write('\n')
@@ -93,5 +93,5 @@ def _main(args):
 
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
-    # python psmat2txt.py D:/01_PythonAIML/00_Datasets/ps2.0/training/ data/ps/train/_annotations.txt
+    # python psmat2txt.py D:/01_PythonAIML/00_Datasets/ps2.0/training/ data/ps/train_annotations.txt
     _main(parser.parse_args())
