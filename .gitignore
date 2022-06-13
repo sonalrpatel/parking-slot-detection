@@ -3,6 +3,7 @@ logs/
 data/sample/
 data/*.h5
 data/*.weights
+papers/
 
 # Auto generated
 .idea/
