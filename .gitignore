@@ -4,6 +4,7 @@ data/sample/
 data/*.h5
 data/*.weights
 papers/
+*.ini
 
 # Auto generated
 .idea/
