@@ -51,8 +51,8 @@ TRAIN_UNFREEZE_BATCH_SIZE = 16  # note that more GPU memory is required after un
 TRAIN_FREEZE_LR = 1e-3
 TRAIN_UNFREEZE_LR = 1e-4
 TRAIN_FREEZE_INIT_EPOCH = 0
-TRAIN_FREEZE_END_EPOCH = 20
-TRAIN_UNFREEZE_END_EPOCH = 40  # note that it is considered when TRAIN_FREEZE_BODY is True
+TRAIN_FREEZE_END_EPOCH = 30
+TRAIN_UNFREEZE_END_EPOCH = 70  # note that it is considered when TRAIN_FREEZE_BODY is True
 
 # VAL options
 VAL_ANNOT_PATH = [d + "_annotations.txt" for d in DIR_VALID]
