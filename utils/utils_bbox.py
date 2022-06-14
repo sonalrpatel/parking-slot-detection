@@ -179,8 +179,8 @@ def DecodeBox(outputs,  # raw outputs from YoloV3
               # ==============================================================
               anchor_mask=[[6, 7, 8], [3, 4, 5], [0, 1, 2]],
               max_boxes=100,
-              confidence=0.5,
-              nms_iou=0.3,
+              conf_thresh=0.5,
+              nms_iou_thresh=0.3,
               letterbox_image=True):
     # ==============================================================
     #   Decode the output of the model/network
@@ -219,7 +219,7 @@ def DecodeBox(outputs,  # raw outputs from YoloV3
     #   Perform non-max suppression
     # ==============================================================
     box_scores = box_confidence * box_class_probs
-    mask = (box_scores >= confidence)
+    mask = (box_scores >= conf_thresh)
     max_boxes_tensor = K.constant(max_boxes, dtype='int32')
     boxes_out = []
     scores_out = []
@@ -234,7 +234,8 @@ def DecodeBox(outputs,  # raw outputs from YoloV3
         # ==============================================================
         #   retrieve NMS index via IOU threshold
         # ==============================================================
-        nms_index = tf.image.non_max_suppression(class_boxes, class_box_scores, max_boxes_tensor, iou_threshold=nms_iou)
+        nms_index = tf.image.non_max_suppression(class_boxes, class_box_scores, max_boxes_tensor,
+                                                 iou_threshold=nms_iou_thresh)
 
         # ==============================================================
         #   retrieve boxes, boxes scores and classes via NMS index

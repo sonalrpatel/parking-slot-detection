@@ -11,18 +11,12 @@ YOLO_TYPE = "yolov3"
 YOLO_FRAMEWORK = "tf"
 YOLO_V3_WEIGHTS = "yolov3.weights"
 YOLO_CUSTOM_WEIGHTS = False
-YOLO_IOU_LOSS_THRESH = 0.5
+YOLO_IOU_LOSS_THRESH = 0.7
 YOLO_STRIDES = [8, 16, 32]
 YOLO_SCALES = [52, 26, 13]
 YOLO_NUM_SCALES = 3
 YOLO_ANCHOR_PER_SCALE = 3
 YOLO_MAX_BBOX_PER_SCALE = 100
-# YOLO_ANCHORS = [[[10, 13], [16, 30], [33, 23]],         # 52x52 grids for small objects
-#                 [[30, 61], [62, 45], [59, 119]],        # 26x26 grids for medium objects
-#                 [[116, 90], [156, 198], [373, 326]]]    # 13x13 grids for large objects
-YOLO_ANCHORS = [[[10, 13], [28, 42], [33, 23]],
-                [[30, 61], [62, 45], [61, 199]],
-                [[126, 87], [156, 198], [204, 180]]]
 YOLO_ANCHORS_MASK = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
 YOLO_LAYER_WITH_NAMES = True
 

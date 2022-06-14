@@ -144,8 +144,8 @@ def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, ignore_thre
         # =========================================================
         #   confidence loss
         #   if there is true box，calculate cross entropy loss between predicted score and 1
-        #   if there no box，calculate cross entropy loss between predicted score and 0
-        #   and will ignore the samples if best_iou<ignore_thresh
+        #   if there is no box，calculate cross entropy loss between predicted score and 0
+        #   and will ignore the samples if best_iou < ignore_thresh
         # =========================================================
         conf_pos_mask = object_mask
         conf_neg_mask = (1 - object_mask) * ignore_mask

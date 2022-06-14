@@ -7,12 +7,8 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 
 from model.model_functional import YOLOv3
-
 from loss.loss_functional import yolo_loss
-# from model_yolo3_tf2.yolo_training import yolo_loss
-
 from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
-# from model_yolo3_tf2.dataloader import YoloDataGenerator, YoloAnnotationPairs
 
 from utils.callbacks import ExponentDecayScheduler, LossHistory, ModelCheckpoint
 from utils.utils import *
@@ -175,16 +171,15 @@ def _main():
            'VAL_VALIDATION_USING should not be VAL on absence of validation data.'
 
     # =======================================================
-    #   Get classes and anchors
+    #   Get classes, anchors and threshold
     # =======================================================
     class_names, num_classes = get_classes(classes_path)
     anchors, num_anchors = get_anchors(anchors_path)
+    ignore_thresh = YOLO_IOU_LOSS_THRESH
 
     # =======================================================
     #   Create a yolo model
     # =======================================================
-    # model_body = make_yolov3_model((None, None, 3))
-    # model_body = yolo_body((None, None, 3), anchors_mask, num_classes)
     model_body = YOLOv3((None, None, 3), num_classes)
     print('Create YOLOv3 model with {} anchors and {} classes.'.format(num_anchors, num_classes))
 
@@ -211,7 +206,8 @@ def _main():
             'input_shape': image_shape,
             'anchors': anchors,
             'anchors_mask': anchors_mask,
-            'num_classes': num_classes
+            'num_classes': num_classes,
+            'ignore_thresh': ignore_thresh
         }
     )([*model_body.output, *y_true])
 
