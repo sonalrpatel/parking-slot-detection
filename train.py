@@ -230,7 +230,7 @@ def _main():
     logging = TensorBoard(log_dir)
     checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5', monitor='val_loss',
                                  save_weights_only=True, save_best_only=True, period=1)
-    reduce_lr = ExponentDecayScheduler(decay_rate=0.94, verbose=1)
+    reduce_lr = ExponentDecayScheduler(decay_rate=0.98, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
     loss_history = LossHistory(log_dir)
 
@@ -255,7 +255,8 @@ def _main():
         # =======================================================
         #   Model compile
         # =======================================================
-        model.compile(optimizer=Adam(learning_rate=freeze_lr), loss={'yolo_loss': lambda y_true, y_pred: y_pred})
+        model.compile(optimizer=Adam(learning_rate=freeze_lr, epsilon=1e-8),
+                      loss={'yolo_loss': lambda y_true, y_pred: y_pred})
 
         # =======================================================
         #   Annotation pairs
@@ -307,7 +308,8 @@ def _main():
         # =======================================================
         #   Recompile to apply the change
         # =======================================================
-        model.compile(optimizer=Adam(learning_rate=unfreeze_lr), loss={'yolo_loss': lambda y_true, y_pred: y_pred})
+        model.compile(optimizer=Adam(learning_rate=unfreeze_lr, epsilon=1e-8),
+                      loss={'yolo_loss': lambda y_true, y_pred: y_pred})
 
         # =======================================================
         #   Data loaders
