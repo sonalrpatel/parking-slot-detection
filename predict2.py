@@ -13,6 +13,7 @@ from tqdm import tqdm
 from PIL import ImageDraw, ImageFont
 from tensorflow.keras.layers import Input, Lambda
 from tensorflow.keras.models import Model
+from access_dict_by_dot import AccessDictByDot
 
 from model.model_functional import YOLOv3
 from utils.utils import *
@@ -73,7 +74,7 @@ class YoloDecode(object):
         # =====================================================================
         #   Only prediction boxes with scores greater than confidence will be kept
         # =====================================================================
-        self.conf_thresh = 0.9
+        self.conf_thresh = 0.2
 
         # =====================================================================
         #   nms_iou size used for non-maximum suppression
@@ -315,7 +316,7 @@ def _main(args):
     #   'dir_predict' means to traverse the folder to detect and save. By default, the img folder is traversed and
     #       the img_out folder is saved. For details, see the notes below.
     # =====================================================================
-    mode = "dir_predict"
+    mode = "predict"
 
     # =====================================================================
     #   video_origin_path is used to specify the path of the video, when video_origin_path = 0, it means to detect
@@ -442,4 +443,11 @@ if __name__ == '__main__':
     # python predict2.py [-i] <image_path>
     # python predict2.py -w data/trained_weights_final.h5 -c data/demo/train/_classes.txt -i data/demo/train/20160725-3-1.jpg
     # python predict2.py -w data/ep064-loss0.431-val_loss0.408.h5 -c data/demo/train/_classes.txt
-    _main(parser.parse_args())
+    dictionary = {
+        'weight_path' : "data/ep064-loss0.431-val_loss0.408.h5",
+        'classes_path' : "data/demo/train/_classes.txt",
+        'image_path' : "data/demo/train/20160725-3-1.jpg"
+    }
+    args = AccessDictByDot.load(dictionary)
+    _main(args)
+    # _main(parser.parse_args())
