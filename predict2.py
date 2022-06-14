@@ -220,7 +220,7 @@ class YoloDecode(object):
     # =====================================================================
     #   Detect pictures
     # =====================================================================
-    def detect_image(self, image):
+    def detect_image(self, image, mode=None):
         # =====================================================================
         #   Preprocess image and Add the batch_size dimension
         # =====================================================================
@@ -233,7 +233,8 @@ class YoloDecode(object):
         #   Feed the image into the network to make predictions!
         # =====================================================================
         out_boxes, out_scores, out_classes = self.model_decode([image_data, input_image_shape])
-        print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
+        if mode != "dir_predict":
+            print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
 
         # =====================================================================
         #   Draw bounding boxes on the image using labels
@@ -314,7 +315,7 @@ def _main(args):
     #   'dir_predict' means to traverse the folder to detect and save. By default, the img folder is traversed and
     #       the img_out folder is saved. For details, see the notes below.
     # =====================================================================
-    mode = "predict"
+    mode = "dir_predict"
 
     # =====================================================================
     #   video_origin_path is used to specify the path of the video, when video_origin_path = 0, it means to detect
@@ -343,8 +344,8 @@ def _main(args):
     #   dir_save_path specifies the save path of the detected image
     #   dir_origin_path and dir_save_path are only valid when mode = 'dir_predict'
     # =====================================================================
-    dir_origin_path = "img/"
-    dir_save_path = "img_out/"
+    dir_origin_path = "data/demo/train/"
+    dir_save_path = "data_out/"
 
     # =====================================================================
     #   If you want to save the detected image, use image_out.save("img.jpg") to save it, and modify it directly in
@@ -427,7 +428,7 @@ def _main(args):
                     ('.bmp', '.dib', '.png', '.jpg', '.jpeg', '.pbm', '.pgm', '.ppm', '.tif', '.tiff')):
                 image_path = os.path.join(dir_origin_path, img_name)
                 image = Image.open(image_path)
-                image_out = yolo.detect_image(image)
+                image_out = yolo.detect_image(image, mode)
                 if not os.path.exists(dir_save_path):
                     os.makedirs(dir_save_path)
                 image_out.save(os.path.join(dir_save_path, img_name))
@@ -440,5 +441,5 @@ if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
     # python predict2.py [-i] <image_path>
     # python predict2.py -w data/trained_weights_final.h5 -c data/demo/train/_classes.txt -i data/demo/train/20160725-3-1.jpg
-    # python predict2.py -w data/trained_weights_final.h5 -c data/demo/train/_classes.txt -i data/demo/train/20160725-5-652.jpg
+    # python predict2.py -w data/ep064-loss0.431-val_loss0.408.h5 -c data/demo/train/_classes.txt
     _main(parser.parse_args())
