@@ -73,12 +73,12 @@ class YoloDecode(object):
         # =====================================================================
         #   Only prediction boxes with scores greater than confidence will be kept
         # =====================================================================
-        self.confidence = 0.5
+        self.conf_thresh = 0.9
 
         # =====================================================================
         #   nms_iou size used for non-maximum suppression
         # =====================================================================
-        self.nms_iou = 0.3
+        self.nms_iou_thresh = 0.5
         self.max_boxes = 100
 
         # =====================================================================
@@ -105,8 +105,6 @@ class YoloDecode(object):
         #   Create a yolo model
         # =====================================================================
         self.model_body = YOLOv3((None, None, 3), self.num_classes)
-        # self.model_body = make_yolov3_model((None, None, 3))
-        # self.model_body = yolo_body((None, None, 3), self.anchors_mask, self.num_classes)
 
         # =====================================================================
         #   Load model weights
@@ -131,8 +129,8 @@ class YoloDecode(object):
                 'num_classes': self.num_classes,
                 'input_shape': self.input_shape,
                 'anchor_mask': self.anchors_mask,
-                'confidence': self.confidence,
-                'nms_iou': self.nms_iou,
+                'conf_thresh': self.conf_thresh,
+                'nms_iou_thresh': self.nms_iou_thresh,
                 'max_boxes': self.max_boxes,
                 'letterbox_image': self.letterbox_image
             }
@@ -441,5 +439,6 @@ def _main(args):
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
     # python predict2.py [-i] <image_path>
-    # python predict2.py -w data/yolov3_ps_s1.h5 -c data/demo/train/_classes.txt -i data/demo/train/20160725-7-537.jpg
+    # python predict2.py -w data/trained_weights_final.h5 -c data/demo/train/_classes.txt -i data/demo/train/20160725-3-1.jpg
+    # python predict2.py -w data/trained_weights_final.h5 -c data/demo/train/_classes.txt -i data/demo/train/20160725-5-652.jpg
     _main(parser.parse_args())

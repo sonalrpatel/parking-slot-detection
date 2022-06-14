@@ -263,6 +263,8 @@ def _main():
         if val_using == "TRAIN":
             val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
             train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
+            print("Training with {} train & {} val samples from TRAIN.".format(len(train_annotation_pairs),
+                                                                               len(val_annotation_pairs)))
 
         # =======================================================
         #   Data loaders
