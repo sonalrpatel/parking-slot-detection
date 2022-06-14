@@ -263,8 +263,6 @@ def _main():
         if val_using == "TRAIN":
             val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
             train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
-            print("Training with {} train & {} val samples from TRAIN.".format(len(train_annotation_pairs),
-                                                                               len(val_annotation_pairs)))
 
         # =======================================================
         #   Data loaders
@@ -279,6 +277,8 @@ def _main():
         #   Model fit
         # =======================================================
         if val_using == "VAL" or val_using == "TRAIN":
+            print("Training with {} train samples and validating with {} val samples from {}."
+                  .format(len(train_annotation_pairs), len(val_annotation_pairs), val_using))
             model.fit(
                 train_dataloader, steps_per_epoch=train_dataloader.__len__(),
                 validation_data=val_dataloader, validation_steps=val_dataloader.__len__(),
@@ -286,6 +286,7 @@ def _main():
                 callbacks=[logging, checkpoint, reduce_lr, early_stopping, loss_history]
             )
         else:
+            print("Training with {} train samples without validation.".format(len(train_annotation_pairs)))
             model.fit(
                 train_dataloader, steps_per_epoch=train_dataloader.__len__(),
                 initial_epoch=init_epoch, epochs=freeze_end_epoch,

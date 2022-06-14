@@ -174,20 +174,3 @@ def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, ignore_thre
 
     loss = loss / num_pos
     return loss
-
-
-if __name__ == "__main__":
-    outputs = tf.random.normal([4, 5, 5, 255])
-    anchors = np.array([[10, 13], [16, 30], [33, 23], [30, 61], [62, 45], [59, 119], [116, 90], [156, 198], [373, 326]])
-    anchors_mask = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
-    input_shape = (416, 416)
-
-    y_true = [Input(shape=(input_shape[0] // {0: 32, 1: 16, 2: 8}[l], input_shape[1] // {0: 32, 1: 16, 2: 8}[l], len(anchors_mask[l]), 25)) for l in range(len(anchors_mask))]
-    yolo_outputs = [Input(shape=(input_shape[0] // {0: 32, 1: 16, 2: 8}[l], input_shape[1] // {0: 32, 1: 16, 2: 8}[l], len(anchors_mask[l]) * 25)) for l in range(len(anchors_mask))]
-
-    # y_true = [tf.random.normal([4, 13, 13, 3, 25]), tf.random.normal([4, 13, 13, 3, 25]), tf.random.normal([4, 13, 13, 3, 25])]
-    # yolo_outputs = [tf.random.normal([4, 13, 13, 3 * 25]), tf.random.normal([4, 13, 13, 3 * 25]), tf.random.normal([4, 13, 13, 3 * 25])]
-
-    loss = yolo_loss([*yolo_outputs, *y_true], input_shape, anchors, anchors_mask, num_classes=80)
-
-    print(input_shape.__len__(), outputs[-1].shape)
