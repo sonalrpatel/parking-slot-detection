@@ -295,6 +295,13 @@ def _main():
 
         model.save_weights(log_dir + 'trained_weights_stage_1.h5')
 
+        # =======================================================
+        #   In case of early stopping, set freeze_end_epoch to number of epochs ran with freezed layers
+        #   This helps in continuous sequence of epoch numbers in early stopping situation
+        # =======================================================
+        if len(loss_history.losses) < freeze_end_epoch:
+            freeze_end_epoch = len(loss_history.losses)
+
     # =======================================================
     #   Unfreeze layers trainability
     #   Continue training (if freeze_body is True)
