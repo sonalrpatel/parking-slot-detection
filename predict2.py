@@ -441,11 +441,11 @@ def _main(args):
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
     # python predict2.py [-i] <image_path>
-    # python predict2.py -w data/trained_weights_final.h5 -c data/demo/train/_classes.txt -i data/demo/train/20160725-3-1.jpg
-    # python predict2.py -w data/ep064-loss0.431-val_loss0.408.h5 -c data/demo/train/_classes.txt
+    # python predict2.py -w data/trained_weights_final.h5 -c data/ps_classes.txt -i data/demo/train/20160725-3-1.jpg
+    # python predict2.py -w data/ep064-loss0.431-val_loss0.408.h5 -c data/ps_classes.txt
     dictionary = {
         'weight_path' : "data/ep064-loss0.431-val_loss0.408.h5",
-        'classes_path' : "data/demo/train/_classes.txt",
+        'classes_path' : "data/ps_classes.txt",
         'image_path' : "data/demo/train/20160725-3-1.jpg"
     }
     args = AccessDictByDot.load(dictionary)

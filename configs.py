@@ -29,16 +29,15 @@ DIR_DATA = ["data/demo/"]
 DIR_TRAIN = [d + "train/" for d in DIR_DATA]
 DIR_VALID = [d + "valid/" for d in DIR_DATA]
 DIR_TEST = [d + "test/" for d in DIR_DATA]
-PATH_CLASSES = DIR_TRAIN[0] + "_classes.txt"
+PATH_CLASSES = "data/ps_classes.txt"
 PATH_ANCHORS = "data/yolo_anchors.txt"
-PATH_WEIGHT = "data/yolov3_coco.h5"
+PATH_WEIGHT = "data/yolov3_ps.h5"
 PATH_DARKNET_WEIGHT = "data/yolov3.weights"
 
 # TRAIN options
 TRAIN_YOLO_TINY = False
 TRAIN_SAVE_BEST_ONLY = True  # saves only best model according validation loss (True recommended)
 TRAIN_SAVE_CHECKPOINT = False  # saves all best validated checkpoints in training process (may require a lot disk space) (False recommended)
-TRAIN_LOGDIR = "log"
 TRAIN_ANNOT_PATH = [d + "_annotations.txt" for d in DIR_TRAIN]
 TRAIN_CHECKPOINTS_FOLDER = "checkpoints"
 TRAIN_MODEL_NAME = f"{YOLO_TYPE}_custom"
@@ -52,7 +51,7 @@ TRAIN_FREEZE_LR = 1e-3
 TRAIN_UNFREEZE_LR = 1e-4
 TRAIN_FREEZE_INIT_EPOCH = 0
 TRAIN_FREEZE_END_EPOCH = 30
-TRAIN_UNFREEZE_END_EPOCH = 70  # note that it is considered when TRAIN_FREEZE_BODY is True
+TRAIN_UNFREEZE_END_EPOCH = 60  # note that it is considered when TRAIN_FREEZE_BODY is True
 
 # VAL options
 VAL_ANNOT_PATH = [d + "_annotations.txt" for d in DIR_VALID]
@@ -71,3 +70,4 @@ TEST_IOU_THRESHOLD = 0.5
 
 # LOG directory
 LOG_DIR = "logs/"
+LOG_DIR2 = ""

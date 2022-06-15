@@ -124,6 +124,11 @@ def _main():
         os.makedirs(log_dir)
 
     # =======================================================
+    #   Google drive link directory to store model at stages
+    # =======================================================
+    log_dir2 = LOG_DIR2
+
+    # =======================================================
     #   The size of the input shape must be a multiple of 32
     # =======================================================
     image_shape = IMAGE_SIZE
@@ -224,8 +229,8 @@ def _main():
     #       many times, indicating that the model is basically converged
     # =======================================================
     logging = TensorBoard(log_dir)
-    checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5', monitor='val_loss',
-                                 save_weights_only=True, save_best_only=True, period=1)
+    checkpoint = ModelCheckpoint(log_dir2 + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5', monitor='val_loss',
+                                 save_weights_only=True, save_best_only=True, period=10)
     reduce_lr = ExponentDecayScheduler(decay_rate=0.98, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
     loss_history = LossHistory(log_dir)
@@ -293,7 +298,7 @@ def _main():
                 callbacks=[logging, checkpoint, reduce_lr, early_stopping, loss_history]
             )
 
-        model.save_weights(log_dir + 'trained_weights_stage_1.h5')
+        model.save_weights(log_dir2 + 'trained_weights_stage_1.h5')
 
         # =======================================================
         #   In case of early stopping, set freeze_end_epoch to number of epochs ran with freezed layers
@@ -344,7 +349,7 @@ def _main():
                 callbacks=[logging, checkpoint, reduce_lr, early_stopping, loss_history]
             )
 
-        model.save_weights(log_dir + 'trained_weights_final.h5')
+        model.save_weights(log_dir2 + 'trained_weights_final.h5')
 
 
 if __name__ == '__main__':
