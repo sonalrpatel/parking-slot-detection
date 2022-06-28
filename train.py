@@ -124,7 +124,7 @@ def _main():
         os.makedirs(log_dir)
 
     # =======================================================
-    #   Google drive link directory to store model at stages
+    #   Separate directory to store model at stages
     # =======================================================
     log_dir2 = LOG_DIR2
 
