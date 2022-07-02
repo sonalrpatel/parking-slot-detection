@@ -1,5 +1,3 @@
-import tensorflow as tf
-from tensorflow.keras import Input
 from utils.utils_bbox import *
 from utils.utils_metric import box_iou
 
@@ -7,7 +5,7 @@ from utils.utils_metric import box_iou
 # =========================================================
 #   loss function
 # =========================================================
-def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, ignore_thresh=0.5):
+def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, loss_iou_thresh=0.5):
     num_layers = len(anchors_mask)
 
     # =========================================================
@@ -87,9 +85,9 @@ def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, ignore_thre
             best_iou = tf.reduce_max(iou, axis=-1)
 
             # shape: [13, 13, 3]
-            ignore_mask_tmp = tf.cast(best_iou < ignore_thresh, tf.float32)
+            ignore_mask_tmp = tf.cast(best_iou < loss_iou_thresh, tf.float32)
 
-            # finally will be shape: [N, 13, 13, 3]
+            # finally will be of shape: [N, 13, 13, 3]
             ignore_mask = ignore_mask.write(idx, ignore_mask_tmp)
 
             return idx + 1, ignore_mask

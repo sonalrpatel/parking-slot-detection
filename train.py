@@ -6,6 +6,8 @@ from tensorflow.keras.layers import Lambda
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 
+from model_yolo3_tf2.yolo import yolo_body
+
 from model.model_functional import YOLOv3
 from loss.loss_functional import yolo_loss
 from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
@@ -117,16 +119,14 @@ def _main():
     weight_path = PATH_WEIGHT
 
     # =======================================================
-    #   Directory to store the model weights
+    #   Directory to store the loss tracking and model weights
     # =======================================================
     log_dir = LOG_DIR
+    log_dir2 = LOG_DIR2
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
-
-    # =======================================================
-    #   Separate directory to store model at stages
-    # =======================================================
-    log_dir2 = LOG_DIR2
+    if not os.path.exists(log_dir2):
+        os.makedirs(log_dir2)
 
     # =======================================================
     #   The size of the input shape must be a multiple of 32
@@ -180,12 +180,13 @@ def _main():
     # =======================================================
     class_names, num_classes = get_classes(classes_path)
     anchors, num_anchors = get_anchors(anchors_path)
-    ignore_thresh = YOLO_IOU_LOSS_THRESH
+    loss_iou_thresh = YOLO_LOSS_IOU_THRESH
 
     # =======================================================
     #   Create a yolo model
     # =======================================================
-    model_body = YOLOv3((None, None, 3), num_classes)
+    model_body = yolo_body((None, None, 3), anchors_mask, num_classes)
+    # model_body = YOLOv3((None, None, 3), num_classes)
     print('Create YOLOv3 model with {} anchors and {} classes.'.format(num_anchors, num_classes))
 
     # =======================================================
@@ -212,7 +213,7 @@ def _main():
             'anchors': anchors,
             'anchors_mask': anchors_mask,
             'num_classes': num_classes,
-            'ignore_thresh': ignore_thresh
+            'loss_iou_thresh': loss_iou_thresh
         }
     )([*model_body.output, *y_true])
 
@@ -229,8 +230,8 @@ def _main():
     #       many times, indicating that the model is basically converged
     # =======================================================
     logging = TensorBoard(log_dir)
-    checkpoint = ModelCheckpoint(log_dir2 + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5', monitor='val_loss',
-                                 save_weights_only=True, save_best_only=True, period=10)
+    checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5', monitor='val_loss',
+                                 save_weights_only=True, save_best_only=True, period=5)
     reduce_lr = ExponentDecayScheduler(decay_rate=0.98, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
     loss_history = LossHistory(log_dir)

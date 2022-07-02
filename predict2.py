@@ -15,9 +15,12 @@ from tensorflow.keras.layers import Input, Lambda
 from tensorflow.keras.models import Model
 from access_dict_by_dot import AccessDictByDot
 
+from model_yolo3_tf2.yolo import yolo_body
+
 from model.model_functional import YOLOv3
 from utils.utils import *
 from utils.utils_bbox import *
+from configs import *
 
 
 parser = argparse.ArgumentParser(description='Objects detection on an Image using Yolov3')
@@ -55,15 +58,15 @@ class YoloDecode(object):
         #   If the shape does not match, pay attention to the modification of the model_path
         #       and classes_path parameters during training
         # =====================================================================
-        self.weight_path = args.weight_path if args.weight_path is not None else 'data/yolov3_coco.h5'
-        self.classes_path = args.classes_path if args.classes_path is not None else 'data/coco_classes.txt'
+        self.weight_path = args.weight_path
+        self.classes_path = args.classes_path
 
         # =====================================================================
         #   anchors_path represents the txt file corresponding to the a priori box, which is generally not modified.
         #   anchors_mask is used to help the code find the corresponding a priori box and is generally not modified.
         # =====================================================================
-        self.anchors_path = 'data/yolo_anchors.txt'
-        self.anchors_mask = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
+        self.anchors_path = PATH_ANCHORS
+        self.anchors_mask = YOLO_ANCHORS_MASK
 
         # =====================================================================
         #   The size of the input image, which must be a multiple of 32.
@@ -74,12 +77,12 @@ class YoloDecode(object):
         # =====================================================================
         #   Only prediction boxes with scores greater than confidence will be kept
         # =====================================================================
-        self.conf_thresh = 0.2
+        self.conf_thresh = PRED_CONF_SCORE_THRESH
 
         # =====================================================================
         #   nms_iou size used for non-maximum suppression
         # =====================================================================
-        self.nms_iou_thresh = 0.5
+        self.nms_iou_thresh = PRED_NMS_IOU_THRESH
         self.max_boxes = 100
 
         # =====================================================================
@@ -105,7 +108,8 @@ class YoloDecode(object):
         # =====================================================================
         #   Create a yolo model
         # =====================================================================
-        self.model_body = YOLOv3((None, None, 3), self.num_classes)
+        self.model_body = yolo_body((None, None, 3), self.anchors_mask, self.num_classes)
+        # self.model_body = YOLOv3((None, None, 3), self.num_classes)
 
         # =====================================================================
         #   Load model weights
@@ -441,13 +445,13 @@ def _main(args):
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
     # python predict2.py [-i] <image_path>
-    # python predict2.py -w data/trained_weights_final.h5 -c data/ps_classes.txt -i data/demo/train/20160725-3-1.jpg
-    # python predict2.py -w data/ep064-loss0.431-val_loss0.408.h5 -c data/ps_classes.txt
+    # python predict2.py -w model_data/trained_weights_final.h5 -c data/ps_classes.txt -i data/demo/train/20160725-3-1.jpg
     dictionary = {
-        'weight_path' : "data/ep064-loss0.431-val_loss0.408.h5",
+        'weight_path' : "model_data/trained_weights_final.h5",
         'classes_path' : "data/ps_classes.txt",
         'image_path' : "data/demo/train/20160725-3-1.jpg"
     }
+
     args = AccessDictByDot.load(dictionary)
     _main(args)
     # _main(parser.parse_args())

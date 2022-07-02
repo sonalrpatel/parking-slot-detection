@@ -88,7 +88,7 @@ def _main(args):
 
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
-    # python visbbox.py data/demo/train/20160725-7-299.jpg data/demo/train/_annotations.txt
-    # python visbbox.py data/demo/train/20160725-5-652.jpg data/demo/train/_annotations.txt
-    # python visbbox.py data/demo/train/20160816-1-3003.jpg data/demo/train/_annotations.txt
+    # python visbbox.py data/demo/train/20160725-7-299.jpg data/demo/train_annotations.txt
+    # python visbbox.py data/demo/train/20160725-5-652.jpg data/demo/train_annotations.txt
+    # python visbbox.py data/demo/train/20160816-1-3003.jpg data/demo/train_annotations.txt
     _main(parser.parse_args())
