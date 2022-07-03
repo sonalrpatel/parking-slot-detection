@@ -46,7 +46,7 @@ def box_iou(b1, b2):
 # ---------------------------------------------------#
 #   loss function
 # ---------------------------------------------------#
-def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, ignore_thresh):
+def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, loss_iou_thresh):
     num_layers = len(anchors_mask)
     # ---------------------------------------------------------------------------------------------------#
     #   split predictions and ground truth, args is list contains [*model_body.output, *y_true]
@@ -142,7 +142,7 @@ def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, ignore_thre
             #   if best iou is greater or equal than ignore threshold, we think it's
             #   close to the true box will not treat it as a ignored sample
             # -----------------------------------------------------------#
-            ignore_mask = ignore_mask.write(b, K.cast(best_iou < ignore_thresh, K.dtype(true_box)))
+            ignore_mask = ignore_mask.write(b, K.cast(best_iou < loss_iou_thresh, K.dtype(true_box)))
             return b + 1, ignore_mask
 
         # -----------------------------------------------------------#
@@ -188,7 +188,7 @@ def yolo_loss(args, input_shape, anchors, anchors_mask, num_classes, ignore_thre
         # ------------------------------------------------------------------------------#
         #   if there is true box，calculate cross entropy loss between predicted score and 1
         #   if there no box，calculate cross entropy loss between predicted score and 0
-        #   and will ignore the samples if best_iou<ignore_thresh
+        #   and will ignore the samples if best_iou<loss_iou_thresh
         # ------------------------------------------------------------------------------#
         confidence_loss = object_mask * K.binary_crossentropy(object_mask, raw_pred[..., 4:5], from_logits=True) + \
                           (1 - object_mask) * K.binary_crossentropy(object_mask, raw_pred[..., 4:5],
