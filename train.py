@@ -7,9 +7,10 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 
 from model_yolo3_tf2.yolo import yolo_body
+from model_yolo3_tf2.yolo_training import yolo_loss
 
-from model.model_functional import YOLOv3
-from loss.loss_functional import yolo_loss
+# from model.model_functional import YOLOv3
+# from loss.loss_functional import yolo_loss
 from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
 
 from utils.callbacks import ExponentDecayScheduler, LossHistory, ModelCheckpoint
