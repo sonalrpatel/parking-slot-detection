@@ -15,6 +15,14 @@ def compose(*funcs):
 #   Convert image to RGB
 #   Currently only support RGB, all the image should convert to RGB before send into model
 # ===================================================================
+def cvtColor(image):
+    if len(np.shape(image)) == 3 and np.shape(image)[2] == 3:
+        return image
+    else:
+        image = image.convert('RGB')
+        return image
+
+
 def convert2rgb(image):
     if len(np.shape(image)) == 3 and np.shape(image)[2] == 3:
         return image
