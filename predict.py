@@ -139,9 +139,9 @@ def _main(args):
 
 if __name__ == '__main__':
     dictionary = {
-        'weight_path': "C:/Users/Downloads/ep020-loss7.363-val_loss7.323.h5",
+        'weight_path': "C:/Users/pso9kor/Downloads/ep020-loss11.630-val_loss12.243.h5",
         'classes_path': "data/ps_classes.txt",
-        'image_path': "data/demo/train/20160816-1-2124.jpg"
+        'image_path': "data/demo/train/20160725-3-1.jpg"
     }
     args = AccessDictByDot.load(dictionary)
     _main(args)
