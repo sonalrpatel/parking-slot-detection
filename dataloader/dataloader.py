@@ -13,7 +13,7 @@ def read_lines(path):
     return lines
 
 
-def YoloAnnotationPairs(annotation_path):
+def YoloAnnotationPairs(annotation_path, mode):
     """
     Load annotations
     Customize this function as per your dataset
@@ -27,7 +27,7 @@ def YoloAnnotationPairs(annotation_path):
     annotation_pairs = []
     for path in annotation_path:
         lines = read_lines(path)
-        pairs = [[path.rsplit('/', 1)[0] + '/train/' + line.split()[0],
+        pairs = [[path.rsplit('/', 1)[0] + '/' + str(mode) + '/' + line.split()[0],
                   np.array([list(map(int, box.split(','))) for box in line.split()[1:]])]
                  for line in lines]
         annotation_pairs.extend(pairs)

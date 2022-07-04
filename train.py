@@ -264,9 +264,9 @@ def _main():
         # =======================================================
         #   Annotation pairs
         # =======================================================
-        train_annotation_pairs = YoloAnnotationPairs(train_annot_path)
+        train_annotation_pairs = YoloAnnotationPairs(train_annot_path, 'train')
         if val_using == "VAL":
-            val_annotation_pairs = YoloAnnotationPairs(val_annot_path)
+            val_annotation_pairs = YoloAnnotationPairs(val_annot_path, 'val')
         if val_using == "TRAIN":
             val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
             train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
