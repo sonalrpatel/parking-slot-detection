@@ -91,7 +91,7 @@ if __name__ == "__main__":
     #----------------------------------------------------#
     Init_Epoch          = 0
     Freeze_Epoch        = 30
-    Freeze_batch_size   = 32
+    Freeze_batch_size   = 8
     Freeze_lr           = 1e-3
     #----------------------------------------------------#
     #   解冻阶段训练参数
@@ -116,8 +116,8 @@ if __name__ == "__main__":
     #----------------------------------------------------#
     #   获得图片路径和标签
     #----------------------------------------------------#
-    train_annotation_path   = 'data/ps/train_annotations.txt'
-    train_data_path         = 'data/ps/train/'
+    train_annotation_path   = 'data/demo/train_annotations.txt'
+    train_data_path         = 'data/demo/train/'
     val_split               = 0.2
     #----------------------------------------------------#
     #   获取classes和anchor
@@ -217,13 +217,16 @@ if __name__ == "__main__":
         val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
         train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
 
+        train_dataloader    = YoloDatasets(train_annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, train = True)
+        val_dataloader      = YoloDatasets(val_annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, train = False)
+
         # =======================================================
         #   Data loaders
         # =======================================================
-        train_dataloader = YoloDataGenerator(train_annotation_pairs, input_shape, anchors, batch_size,
-                                             num_classes, anchors_mask, do_aug=False)
-        val_dataloader = YoloDataGenerator(val_annotation_pairs, input_shape, anchors, batch_size,
-                                           num_classes, anchors_mask, do_aug=False)
+        # train_dataloader = YoloDataGenerator(train_annotation_pairs, input_shape, anchors, batch_size,
+        #                                      num_classes, anchors_mask, do_aug=False)
+        # val_dataloader = YoloDataGenerator(val_annotation_pairs, input_shape, anchors, batch_size,
+        #                                    num_classes, anchors_mask, do_aug=False)
 
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
 
