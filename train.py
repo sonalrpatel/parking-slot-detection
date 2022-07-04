@@ -232,8 +232,8 @@ def _main():
     # =======================================================
     logging = TensorBoard(log_dir)
     checkpoint = ModelCheckpoint(log_dir2 + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5', monitor='val_loss',
-                                 save_weights_only=True, save_best_only=True, period=5)
-    reduce_lr = ExponentDecayScheduler(decay_rate=0.98, verbose=1)
+                                 save_weights_only=True, save_best_only=True, period=10)
+    reduce_lr = ExponentDecayScheduler(decay_rate=0.94, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
     loss_history = LossHistory(log_dir)
 

@@ -11,6 +11,7 @@ from tensorflow.keras.models import Model
 from model_yolo3_tf2.yolo import yolo_body
 from utils.utils import cvtColor, get_anchors, get_classes, preprocess_input, resize_image
 from utils.utils_bbox import DecodeBox
+from configs import *
 
 
 class YOLO(object):
@@ -23,8 +24,8 @@ class YOLO(object):
         #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         # ---------------------------------------------------------------------#
-        "model_path"	    : 'C:/Users/pso9kor/Downloads/ep020-loss7.363-val_loss7.323.h5',
-        "classes_path"		: 'data/ps_classes.txt',
+        # "model_path"	    : 'model_data/trained_weight_final.h5',
+        # "classes_path"    : 'data/ps_classes.txt',
         # ---------------------------------------------------------------------#
         #   anchors_path代表先验框对应的txt文件，一般不修改。
         #   anchors_mask用于帮助代码找到对应的先验框，一般不修改。
@@ -38,11 +39,11 @@ class YOLO(object):
         # ---------------------------------------------------------------------#
         #   只有得分大于置信度的预测框会被保留下来
         # ---------------------------------------------------------------------#
-        "conf_thresh"        : 0.5,
+        "conf_thresh"       : 'PRED_CONF_SCORE_THRESH',
         # ---------------------------------------------------------------------#
         #   非极大抑制所用到的nms_iou大小
         # ---------------------------------------------------------------------#
-        "nms_iou_thresh"           : 0.3,
+        "nms_iou_thresh"    : 'PRED_NMS_IOU_THRESH',
         "max_boxes"         : 100,
         # ---------------------------------------------------------------------#
         #   该变量用于控制是否使用letterbox_image对输入图像进行不失真的resize，
@@ -61,10 +62,12 @@ class YOLO(object):
     # ---------------------------------------------------#
     #   初始化yolo
     # ---------------------------------------------------#
-    def __init__(self, **kwargs):
+    def __init__(self, args, **kwargs):
         self.__dict__.update(self._defaults)
         for name, value in kwargs.items():
             setattr(self, name, value)
+        self.model_path = args.weight_path
+        self.classes_path = args.classes_path
 
         # ---------------------------------------------------#
         #   获得种类和先验框的数量
@@ -149,7 +152,7 @@ class YOLO(object):
         # ---------------------------------------------------------#
         #   设置字体与边框厚度
         # ---------------------------------------------------------#
-        font = ImageFont.truetype(font='font/simhei.ttf',
+        font = ImageFont.truetype(font='model_data/simhei.ttf',
                                   size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
         thickness = int(max((image.size[0] + image.size[1]) // np.mean(self.input_shape), 1))
 
@@ -220,7 +223,7 @@ class YOLO(object):
     #   检测图片
     # ---------------------------------------------------#
     def get_map_txt(self, image_id, image, class_names, map_out_path):
-        f = open(os.path.join(map_out_path, "detection-results/ " + image_id + ".txt"), "w")
+        f = open(os.path.join(map_out_path, "detection-results/" + image_id + ".txt"), "w")
         # ---------------------------------------------------------#
         #   在这里将图像转换成RGB图像，防止灰度图在预测时报错。
         # ---------------------------------------------------------#

@@ -18,7 +18,7 @@ for gpu in gpus:
 
 
 def _main(args):
-    yolo = YOLO()
+    yolo = YOLO(args)
     # ----------------------------------------------------------------------------------------------------------#
     #   mode用于指定测试的模式：
     #   'predict'表示单张图片预测，如果想对预测过程进行修改，如保存图片，截取对象等，可以先看下方详细的注释
@@ -139,7 +139,7 @@ def _main(args):
 
 if __name__ == '__main__':
     dictionary = {
-        'weight_path': "C:/Users/pso9kor/Downloads/ep020-loss7.363-val_loss7.323.h5",
+        'weight_path': "C:/Users/Downloads/ep020-loss7.363-val_loss7.323.h5",
         'classes_path': "data/ps_classes.txt",
         'image_path': "data/demo/train/20160816-1-2124.jpg"
     }

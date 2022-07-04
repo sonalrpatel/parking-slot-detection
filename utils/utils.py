@@ -1,7 +1,8 @@
+from functools import reduce
+
 import os
 import numpy as np
 from PIL import Image
-from functools import reduce
 
 
 def compose(*funcs):
