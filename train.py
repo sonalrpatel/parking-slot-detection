@@ -90,7 +90,7 @@ if __name__ == "__main__":
     #   占用的显存较小，仅对网络进行微调
     #----------------------------------------------------#
     Init_Epoch          = 0
-    Freeze_Epoch        = 30
+    Freeze_Epoch        = 10
     Freeze_batch_size   = 32
     Freeze_lr           = 1e-3
     #----------------------------------------------------#
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #   此时模型的主干不被冻结了，特征提取网络会发生改变
     #   占用的显存较大，网络所有的参数都会发生改变
     #----------------------------------------------------#
-    UnFreeze_Epoch      = 50
+    UnFreeze_Epoch      = 10
     Unfreeze_batch_size = 16
     Unfreeze_lr         = 1e-4
     #------------------------------------------------------#
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     #-------------------------------------------------------------------------------#
     logging         = TensorBoard(log_dir = 'logs/')
     checkpoint      = ModelCheckpoint(log_path + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
-                                      monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = 10)
+                                      monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = 5)
     reduce_lr       = ExponentDecayScheduler(decay_rate = 0.94, verbose = 1)
     early_stopping  = EarlyStopping(monitor='val_loss', min_delta = 0, patience = 10, verbose = 1)
     loss_history    = LossHistory('logs/')
@@ -226,9 +226,9 @@ if __name__ == "__main__":
 
         model.fit(
             train_dataloader,
-            steps_per_epoch     = epoch_step,
+            steps_per_epoch     = train_dataloader.__len__(),
             validation_data     = val_dataloader,
-            validation_steps    = epoch_step_val,
+            validation_steps    = val_dataloader.__len__(),
             epochs              = end_epoch,
             initial_epoch       = start_epoch,
             use_multiprocessing = True if num_workers > 1 else False,
