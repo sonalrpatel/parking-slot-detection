@@ -42,23 +42,6 @@ class YoloDatasets(keras.utils.Sequence):
         y_true      = self.preprocess_true_boxes(box_data, self.input_shape, self.anchors, self.num_classes)
         return [image_data, *y_true], np.zeros(self.batch_size)
 
-    def generate(self):
-        i = 0
-        while True:
-            image_data  = []
-            box_data    = []
-            for b in range(self.batch_size):
-                if i==0:
-                    np.random.shuffle(self.annotation_lines)
-                image, box  = self.get_random_data(self.annotation_lines[i], self.input_shape, random = self.train)
-                i           = (i+1) % self.length
-                image_data.append(preprocess_input(np.array(image)))
-                box_data.append(box)
-            image_data  = np.array(image_data)
-            box_data    = np.array(box_data)
-            y_true      = self.preprocess_true_boxes(box_data, self.input_shape, self.anchors, self.num_classes)
-            yield image_data, y_true[0], y_true[1], y_true[2]
-
     def on_epoch_begin(self):
         shuffle(self.annotation_lines)
 

@@ -36,7 +36,7 @@ def YoloAnnotationPairs(annotation_path, mode):
     return annotation_pairs
 
 
-class YoloDatasets(keras.utils.Sequence):
+class YoloDatasets2(keras.utils.Sequence):
     def __init__(self, annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, train):
         self.annotation_pairs   = annotation_pairs
         self.length             = len(self.annotation_pairs)
@@ -76,7 +76,6 @@ class YoloDatasets(keras.utils.Sequence):
         return np.random.rand()*(b-a) + a
 
     def get_random_data(self, annotation_pair, input_shape, max_boxes=100, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
-        # line    = annotation_line.split()
         line    = annotation_pair[0]
         #------------------------------#
         #   读取图像并转换成RGB图像
@@ -91,7 +90,6 @@ class YoloDatasets(keras.utils.Sequence):
         #------------------------------#
         #   获得预测框
         #------------------------------#
-        # box     = np.array([np.array(list(map(int,box.split(',')))) for box in line[1:]])
         box     = annotation_pair[1]
 
         if not random:
