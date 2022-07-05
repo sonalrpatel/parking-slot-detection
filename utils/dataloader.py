@@ -9,37 +9,10 @@ from tensorflow import keras
 from utils.utils import cvtColor, preprocess_input
 
 
-def read_lines(path):
-    with open(path) as f:
-        lines = f.readlines()
-    return lines
-
-
-def YoloAnnotationPairs(annotation_path, mode):
-    """
-    Load annotations
-    Customize this function as per your dataset
-    :return:
-        list of pairs of image path and corresponding bounding boxes
-        example:
-        [['.../00_Datasets/PASCAL_VOC/images/000007.jpg', [[0.639, 0.567, 0.718, 0.840, 6.0],
-                                                           [0.529, 0.856, 0.125, 0.435, 4.0]]]
-         ['.../00_Datasets/PASCAL_VOC/images/000008.jpg', [[0.369, 0.657, 0.871, 0.480, 3.0]]]]
-    """""
-    annotation_pairs = []
-    for path in annotation_path:
-        lines = read_lines(path)
-        pairs = [[path.rsplit('/', 1)[0] + '/' + str(mode) + '/' + line.split()[0],
-                  np.array([list(map(int, box.split(','))) for box in line.split()[1:]])]
-                 for line in lines]
-        annotation_pairs.extend(pairs)
-    return annotation_pairs
-
-
 class YoloDatasets(keras.utils.Sequence):
-    def __init__(self, annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, train):
-        self.annotation_pairs   = annotation_pairs
-        self.length             = len(self.annotation_pairs)
+    def __init__(self, annotation_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, train):
+        self.annotation_lines   = annotation_lines
+        self.length             = len(self.annotation_lines)
         
         self.input_shape        = input_shape
         self.anchors            = anchors
@@ -49,7 +22,7 @@ class YoloDatasets(keras.utils.Sequence):
         self.train              = train
 
     def __len__(self):
-        return math.ceil(len(self.annotation_pairs) / float(self.batch_size))
+        return math.ceil(len(self.annotation_lines) / float(self.batch_size))
 
     def __getitem__(self, index):
         image_data  = []
@@ -60,7 +33,7 @@ class YoloDatasets(keras.utils.Sequence):
             #   训练时进行数据的随机增强
             #   验证时不进行数据的随机增强
             #---------------------------------------------------#
-            image, box  = self.get_random_data(self.annotation_pairs[i], self.input_shape, random = self.train)
+            image, box  = self.get_random_data(self.annotation_lines[i], self.input_shape, random = self.train)
             image_data.append(preprocess_input(np.array(image)))
             box_data.append(box)
 
@@ -69,20 +42,35 @@ class YoloDatasets(keras.utils.Sequence):
         y_true      = self.preprocess_true_boxes(box_data, self.input_shape, self.anchors, self.num_classes)
         return [image_data, *y_true], np.zeros(self.batch_size)
 
+    def generate(self):
+        i = 0
+        while True:
+            image_data  = []
+            box_data    = []
+            for b in range(self.batch_size):
+                if i==0:
+                    np.random.shuffle(self.annotation_lines)
+                image, box  = self.get_random_data(self.annotation_lines[i], self.input_shape, random = self.train)
+                i           = (i+1) % self.length
+                image_data.append(preprocess_input(np.array(image)))
+                box_data.append(box)
+            image_data  = np.array(image_data)
+            box_data    = np.array(box_data)
+            y_true      = self.preprocess_true_boxes(box_data, self.input_shape, self.anchors, self.num_classes)
+            yield image_data, y_true[0], y_true[1], y_true[2]
+
     def on_epoch_begin(self):
         shuffle(self.annotation_lines)
 
     def rand(self, a=0, b=1):
         return np.random.rand()*(b-a) + a
 
-    def get_random_data(self, annotation_pairs, input_shape, max_boxes=100, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
-        # line    = annotation_line.split()
-        line    = annotation_pairs[0]
+    def get_random_data(self, annotation_line, input_shape, max_boxes=100, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
+        line    = annotation_line.split()
         #------------------------------#
         #   读取图像并转换成RGB图像
         #------------------------------#
-        # image   = Image.open(line[0])
-        image   = Image.open(line)
+        image   = Image.open(line[0])
         image   = cvtColor(image)
         #------------------------------#
         #   获得图像的高宽与目标高宽
@@ -92,8 +80,7 @@ class YoloDatasets(keras.utils.Sequence):
         #------------------------------#
         #   获得预测框
         #------------------------------#
-        # box     = np.array([np.array(list(map(int,box.split(',')))) for box in line[1:]])
-        box     = annotation_pairs[1]
+        box     = np.array([np.array(list(map(int,box.split(',')))) for box in line[1:]])
 
         if not random:
             scale = min(w/iw, h/ih)
