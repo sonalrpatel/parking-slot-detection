@@ -91,7 +91,7 @@ if __name__ == "__main__":
     # ----------------------------------------------------#
     Init_Epoch = 0
     Freeze_Epoch = 30
-    Freeze_batch_size = 32
+    Freeze_batch_size = 8
     Freeze_lr = 1e-3
     # ----------------------------------------------------#
     #   解冻阶段训练参数
@@ -116,8 +116,8 @@ if __name__ == "__main__":
     # ----------------------------------------------------#
     #   获得图片路径和标签
     # ----------------------------------------------------#
-    train_annotation_path = 'data/ps/train_annotations.txt'
-    train_data_path = 'data/ps/train/'
+    train_annotation_path = 'data/demo/train_annotations.txt'
+    train_data_path = 'data/demo/train/'
     val_split = 0.2
     # ----------------------------------------------------#
     #   获取classes和anchor
