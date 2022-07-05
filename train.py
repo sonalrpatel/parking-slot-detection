@@ -22,7 +22,7 @@ from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
 gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
-    
+
 '''
 训练自己的目标检测模型一定需要注意以下几点：
 1、训练前仔细检查自己的格式是否满足要求，该库要求数据集格式为VOC格式，需要准备好的内容有输入图片和标签
@@ -207,23 +207,18 @@ if __name__ == "__main__":
         if epoch_step == 0 or epoch_step_val == 0:
             raise ValueError('数据集过小，无法进行训练，请扩充数据集。')
 
-        # train_dataloader    = YoloDatasets(train_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, train = True)
-        # val_dataloader      = YoloDatasets(val_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, train = False)
-
-        # =======================================================
         #   Annotation pairs
-        # =======================================================
         train_annotation_pairs = YoloAnnotationPairs([train_annotation_path], 'train')
         val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
         train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
 
-        # =======================================================
         #   Data loaders
-        # =======================================================
-        train_dataloader = YoloDataGenerator(train_annotation_pairs, input_shape, anchors, batch_size,
-                                             num_classes, anchors_mask, do_aug=False)
-        val_dataloader = YoloDataGenerator(val_annotation_pairs, input_shape, anchors, batch_size,
-                                           num_classes, anchors_mask, do_aug=False)
+        train_dataloader    = YoloDatasets(train_annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, train = True)
+        val_dataloader      = YoloDatasets(val_annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, train = False)
+
+        #   Data loaders
+        # train_dataloader = YoloDataGenerator(train_annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, do_aug=False)
+        # val_dataloader = YoloDataGenerator(val_annotation_pairs, input_shape, anchors, batch_size, num_classes, anchors_mask, do_aug=False)
 
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
 
