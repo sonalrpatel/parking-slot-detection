@@ -9,15 +9,22 @@ from tensorflow import keras
 from utils.utils import convert2rgb, preprocess_input
 
 
+def YoloAnnotationPairs(annotation_lines):
+    annotation_pairs = [[line.split()[0],
+                         np.array([np.array(list(map(int, box.split(',')))) for box in line.split()[1:]])]
+                        for line in annotation_lines]
+    return annotation_pairs
+
+
 class YoloDatasets4(keras.utils.Sequence):
     def __init__(self, annotation_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, train):
-        self.annotation_lines = annotation_lines
+        self.annotation_pairs = YoloAnnotationPairs(annotation_lines)
         self.input_shape = input_shape
         self.batch_size = batch_size
         self.anchors = anchors
         self.anchors_mask = anchors_mask
         self.num_classes = num_classes
-        self.num_samples = len(self.annotation_lines)
+        self.num_samples = len(self.annotation_pairs)
         self.num_batches = int(np.ceil(self.num_samples / self.batch_size))
         self.num_scales = len(self.anchors_mask)
         self.train = train
@@ -50,7 +57,7 @@ class YoloDatasets4(keras.utils.Sequence):
         for i in batch_indexes:
             i = i % self.num_samples
 
-            image, box = self.process_data(self.annotation_lines[i], self.input_shape, random=self.train)
+            image, box = self.process_data(self.annotation_pairs[i], self.input_shape, random=self.train)
             image_data.append(preprocess_input(np.array(image)))
             box_data.append(box)
 
@@ -69,17 +76,15 @@ class YoloDatasets4(keras.utils.Sequence):
     def rand(self, a=0, b=1):
         return np.random.rand() * (b - a) + a
 
-    def process_data(self, annotation_line, input_shape, max_boxes=100, jitter=.3, hue=.1, sat=1.5, val=1.5,
+    def process_data(self, annotation_pair, input_shape, max_boxes=100, jitter=.3, hue=.1, sat=1.5, val=1.5,
                      random=True):
         """
         Random preprocessing for real-time data augmentation
         """""
-        line = annotation_line.split()
-
         # =======================================
         #   Read image and convert to RGB image
         # =======================================
-        image = Image.open(line[0])
+        image = Image.open(annotation_pair[0])
         image = convert2rgb(image)
 
         # =======================================
@@ -91,7 +96,7 @@ class YoloDatasets4(keras.utils.Sequence):
         # =======================================
         #   Get prediction box
         # =======================================
-        box = np.array([np.array(list(map(int,box.split(',')))) for box in line[1:]])
+        box = annotation_pair[1]
 
         if not random:
             # =======================================
