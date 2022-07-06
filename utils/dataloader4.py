@@ -19,6 +19,7 @@ def YoloAnnotationPairs(annotation_lines):
 class YoloDatasets4(keras.utils.Sequence):
     def __init__(self, annotation_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, train):
         self.annotation_lines = annotation_lines
+        self.annotation_pairs = YoloAnnotationPairs(self.annotation_lines)
         self.input_shape = input_shape
         self.batch_size = batch_size
         self.anchors = anchors
@@ -37,8 +38,8 @@ class YoloDatasets4(keras.utils.Sequence):
 
     def __getitem__(self, index):
         """
-        Generate one batch of data when the batch corresponding to a given index
-        is called, the generator executes the __getitem__ method to generate it.
+        Generate one batch of data when the batch corresponding to a given index is called,
+        the generator executes the __getitem__ method to generate it.
         """""
         # Generate indexes for a batch
         batch_indexes = range(index * self.batch_size, (index + 1) * self.batch_size)
@@ -57,7 +58,8 @@ class YoloDatasets4(keras.utils.Sequence):
         for i in batch_indexes:
             i = i % self.num_samples
 
-            annotation_pair = YoloAnnotationPairs([self.annotation_lines[i]])
+            # annotation_pair = YoloAnnotationPairs([self.annotation_lines[i]])
+            annotation_pair = [self.annotation_pairs[i]]
             image, box = self.process_data(annotation_pair[0], self.input_shape, random=self.train)
             image_data.append(preprocess_input(np.array(image)))
             box_data.append(box)
@@ -73,6 +75,7 @@ class YoloDatasets4(keras.utils.Sequence):
         Shuffle indexes at start of each epoch
         """""
         shuffle(self.annotation_lines)
+        shuffle(self.annotation_pairs)
 
     def rand(self, a=0, b=1):
         return np.random.rand() * (b - a) + a
