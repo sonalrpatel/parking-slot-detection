@@ -1,11 +1,9 @@
 import math
-from random import shuffle
-
 import cv2
-import numpy as np
-from PIL import Image
+from random import shuffle
 from tensorflow import keras
 
+from utils.utils import *
 from utils.utils import convert2rgb, preprocess_input
 
 
@@ -16,11 +14,9 @@ def YoloAnnotationPairs(annotation_lines):
     return annotation_pairs
 
 
-class YoloDatasets4(keras.utils.Sequence):
-    def __init__(self, annotation_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, train):
+class YoloDataGenerator(keras.utils.Sequence):
+    def __init__(self, annotation_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, do_aug):
         self.annotation_lines = annotation_lines
-        # following method not working. need to check. hence commented.
-        # self.annotation_pairs = YoloAnnotationPairs(self.annotation_lines)
         self.input_shape = input_shape
         self.batch_size = batch_size
         self.anchors = anchors
@@ -29,7 +25,7 @@ class YoloDatasets4(keras.utils.Sequence):
         self.num_samples = len(self.annotation_lines)
         self.num_batches = int(np.ceil(self.num_samples / self.batch_size))
         self.num_scales = len(self.anchors_mask)
-        self.train = train
+        self.do_aug = do_aug
 
     def __len__(self):
         """
@@ -60,9 +56,7 @@ class YoloDatasets4(keras.utils.Sequence):
             i = i % self.num_samples
 
             annotation_pair = YoloAnnotationPairs([self.annotation_lines[i]])
-            # following method not working. need to check. hence commented.
-            # annotation_pair = [self.annotation_pairs[i]]
-            image, box = self.process_data(annotation_pair[0], self.input_shape, random=self.train)
+            image, box = self.process_data(annotation_pair[0], self.input_shape, random=self.do_aug)
             image_data.append(preprocess_input(np.array(image)))
             box_data.append(box)
 
@@ -77,13 +71,11 @@ class YoloDatasets4(keras.utils.Sequence):
         Shuffle indexes at start of each epoch
         """""
         shuffle(self.annotation_lines)
-        # following method not working. need to check. hence commented.
-        # shuffle(self.annotation_pairs)
 
     def rand(self, a=0, b=1):
         return np.random.rand() * (b - a) + a
 
-    def process_data(self, annotation_pair, input_shape, max_boxes=100, jitter=.3, hue=.1, sat=1.5, val=1.5,
+    def process_data(self, img_bboxes_pair, input_shape, max_boxes=100, jitter=.3, hue=.1, sat=1.5, val=1.5,
                      random=True):
         """
         Random preprocessing for real-time data augmentation
@@ -91,7 +83,7 @@ class YoloDatasets4(keras.utils.Sequence):
         # =======================================
         #   Read image and convert to RGB image
         # =======================================
-        image = Image.open(annotation_pair[0])
+        image = Image.open(img_bboxes_pair[0])
         image = convert2rgb(image)
 
         # =======================================
@@ -103,7 +95,7 @@ class YoloDatasets4(keras.utils.Sequence):
         # =======================================
         #   Get prediction box
         # =======================================
-        box = annotation_pair[1]
+        box = img_bboxes_pair[1]
 
         if not random:
             # =======================================

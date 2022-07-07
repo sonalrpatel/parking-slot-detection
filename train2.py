@@ -16,7 +16,9 @@ from model_yolo3_tf2.yolo_training import yolo_loss
 
 # from model.model_functional import YOLOv3
 # from loss.loss_functional import yolo_loss
-from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
+
+# from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
+from dataloader.dataloader2 import YoloDataGenerator
 
 from utils.callbacks import ExponentDecayScheduler, LossHistory, ModelCheckpoint
 from utils.utils import *
@@ -155,7 +157,7 @@ def _main():
     #   At this time, the backbone of the model is frozen, and the feature extraction network does not change
     #   Occupy less memory, only fine-tune the network
     # =======================================================
-    train_annot_path = TRAIN_ANNOT_PATH
+    train_annot_paths = TRAIN_ANNOT_PATHS
     init_epoch = TRAIN_FREEZE_INIT_EPOCH
     freeze_end_epoch = TRAIN_FREEZE_END_EPOCH
     train_freeze_batch_size = TRAIN_FREEZE_BATCH_SIZE
@@ -173,13 +175,13 @@ def _main():
     # =======================================================
     # Validation parameters
     # =======================================================
-    val_annot_path = VAL_ANNOT_PATH
+    val_annot_paths = VAL_ANNOT_PATHS
     val_batch_size = VAL_BATCH_SIZE
     val_using = VAL_VALIDATION_USING
     val_split = VAL_VALIDATION_SPLIT
-    assert os.path.exists(val_annot_path[0]) or \
-           (not os.path.exists(val_annot_path[0]) and (val_using == "TRAIN" or val_using is None)), \
-           'VAL_VALIDATION_USING should not be VAL on absence of validation data.'
+    assert os.path.exists(val_annot_paths[0]) or \
+           (not os.path.exists(val_annot_paths[0]) and (val_using == "TRAIN" or val_using is None)),\
+           'VAL_VALIDATION_USING can not be VAL on absence of validation data.'
 
     # =======================================================
     #   Get classes, anchors and threshold
@@ -236,7 +238,8 @@ def _main():
     #       many times, indicating that the model is basically converged
     # =======================================================
     logging = TensorBoard(log_dir)
-    checkpoint = ModelCheckpoint(log_dir2 + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5', monitor='val_loss',
+    checkpoint = ModelCheckpoint(log_dir2 + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
+                                 monitor='val_loss',
                                  save_weights_only=True, save_best_only=True, period=10)
     reduce_lr = ExponentDecayScheduler(decay_rate=0.94, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
@@ -267,22 +270,42 @@ def _main():
                       loss={'yolo_loss': lambda y_true, y_pred: y_pred})
 
         # =======================================================
+        #   Annotation lines
+        # =======================================================
+        def read_lines(paths, mode):
+            all_lines = []
+            for path in paths:
+                with open(path) as f:
+                    lines = f.readlines()
+                lines = [path.rsplit('/', 1)[0] + '/' + str(mode) + '/' + line for line in lines]
+                all_lines.extend(lines)
+            return all_lines
+
+        train_lines = read_lines(train_annot_paths, 'train')
+        if val_using == "VAL":
+            val_lines = read_lines(val_annot_paths, 'val')
+        if val_using == "TRAIN":
+            val_lines = random.sample(train_lines, int(len(train_lines) * val_split))
+            train_lines = [line for line in train_lines if line not in val_lines]
+
+        # =======================================================
         #   Annotation pairs
         # =======================================================
-        train_annotation_pairs = YoloAnnotationPairs(train_annot_path, 'train')
-        if val_using == "VAL":
-            val_annotation_pairs = YoloAnnotationPairs(val_annot_path, 'val')
-        if val_using == "TRAIN":
-            val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
-            train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
+        # following method is not working. need to check. hence commented for now.
+        # train_annotation_pairs = YoloAnnotationPairs(train_annot_paths, 'train')
+        # if val_using == "VAL":
+        #     val_annotation_pairs = YoloAnnotationPairs(val_annot_paths, 'val')
+        # if val_using == "TRAIN":
+        #     val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
+        #     train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
 
         # =======================================================
         #   Data loaders
         # =======================================================
-        train_dataloader = YoloDataGenerator(train_annotation_pairs, image_shape, anchors, train_freeze_batch_size,
+        train_dataloader = YoloDataGenerator(train_lines, image_shape, anchors, train_freeze_batch_size,
                                              num_classes, anchors_mask, do_aug=False)
         if val_using == "VAL" or val_using == "TRAIN":
-            val_dataloader = YoloDataGenerator(val_annotation_pairs, image_shape, anchors, val_batch_size,
+            val_dataloader = YoloDataGenerator(val_lines, image_shape, anchors, val_batch_size,
                                                num_classes, anchors_mask, do_aug=False)
 
         # =======================================================
@@ -290,7 +313,7 @@ def _main():
         # =======================================================
         if val_using == "VAL" or val_using == "TRAIN":
             print("Training with {} train samples and validating with {} val samples from {}."
-                  .format(len(train_annotation_pairs), len(val_annotation_pairs), val_using))
+                  .format(len(train_lines), len(val_lines), val_using))
             model.fit(
                 train_dataloader, steps_per_epoch=train_dataloader.__len__(),
                 validation_data=val_dataloader, validation_steps=val_dataloader.__len__(),
@@ -298,7 +321,7 @@ def _main():
                 callbacks=[logging, checkpoint, reduce_lr, early_stopping, loss_history]
             )
         else:
-            print("Training with {} train samples without validation.".format(len(train_annotation_pairs)))
+            print("Training with {} train samples without validation.".format(len(train_lines)))
             model.fit(
                 train_dataloader, steps_per_epoch=train_dataloader.__len__(),
                 initial_epoch=init_epoch, epochs=freeze_end_epoch,
@@ -333,10 +356,10 @@ def _main():
         #   Data loaders
         #   Note that more GPU memory is required after unfreezing the body
         # =======================================================
-        train_dataloader = YoloDataGenerator(train_annotation_pairs, image_shape, anchors, train_unfreeze_batch_size,
+        train_dataloader = YoloDataGenerator(train_lines, image_shape, anchors, train_unfreeze_batch_size,
                                              num_classes, anchors_mask, do_aug=False)
         if val_using == "VAL" or val_using == "TRAIN":
-            val_dataloader = YoloDataGenerator(val_annotation_pairs, image_shape, anchors, val_batch_size,
+            val_dataloader = YoloDataGenerator(val_lines, image_shape, anchors, val_batch_size,
                                                num_classes, anchors_mask, do_aug=False)
 
         # =======================================================

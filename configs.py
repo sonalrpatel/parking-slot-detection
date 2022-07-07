@@ -39,7 +39,7 @@ LOG_DIR = "logs/"
 LOG_DIR2 = "logs/"  # server link to store the checkpoint
 
 # TRAIN options
-TRAIN_ANNOT_PATH = [d + "train_annotations.txt" for d in DIR_DATA]
+TRAIN_ANNOT_PATHS = [d + "train_annotations.txt" for d in DIR_DATA]
 TRAIN_YOLO_TINY = False
 TRAIN_SAVE_BEST_ONLY = True  # saves only best model according validation loss (True recommended)
 TRAIN_SAVE_CHECKPOINT = False  # saves all best validated checkpoints in training process (False recommended)
@@ -56,14 +56,14 @@ TRAIN_FREEZE_END_EPOCH = 30
 TRAIN_UNFREEZE_END_EPOCH = 50  # note that it is considered when TRAIN_FREEZE_BODY is True
 
 # VAL options
-VAL_ANNOT_PATH = [d + "val_annotations.txt" for d in DIR_DATA]
+VAL_ANNOT_PATHS = [d + "val_annotations.txt" for d in DIR_DATA]
 VAL_DATA_AUG = False
 VAL_BATCH_SIZE = 16
 VAL_VALIDATION_USING = "TRAIN"  # note that when validation data does not exist, set it to TRAIN or None
 VAL_VALIDATION_SPLIT = 0.2  # note that it will be used when VAL_VALIDATION_USING is TRAIN
 
 # TEST options
-TEST_ANNOT_PATH = [d + "test_annotations.txt" for d in DIR_DATA]
+TEST_ANNOT_PATHS = [d + "test_annotations.txt" for d in DIR_DATA]
 TEST_BATCH_SIZE = 16
 TEST_DATA_AUG = False
 TEST_DETECTED_IMAGE_PATH = ""
