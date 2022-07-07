@@ -11,11 +11,11 @@ from tensorflow.keras.layers import Lambda
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
 
-from model_yolo3_tf2.yolo import yolo_body
-from model_yolo3_tf2.yolo_training import yolo_loss
+# from model_yolo3_tf2.yolo import yolo_body
+# from model_yolo3_tf2.yolo_training import yolo_loss
 
-# from model.model_functional import YOLOv3
-# from loss.loss_functional import yolo_loss
+from model.model_functional import YOLOv3
+from loss.loss_functional import yolo_loss
 
 # from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
 from dataloader.dataloader2 import YoloDataGenerator
@@ -193,8 +193,8 @@ def _main():
     # =======================================================
     #   Create a yolo model
     # =======================================================
-    model_body = yolo_body((None, None, 3), anchors_mask, num_classes)
-    # model_body = YOLOv3((None, None, 3), num_classes)
+    # model_body = yolo_body((None, None, 3), anchors_mask, num_classes)
+    model_body = YOLOv3((None, None, 3), num_classes)
     print('Create YOLOv3 model with {} anchors and {} classes.'.format(num_anchors, num_classes))
 
     # =======================================================
