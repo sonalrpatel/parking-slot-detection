@@ -7,14 +7,13 @@ from utils.utils import *
 from utils.utils import convert2rgb, preprocess_input
 
 
-def YoloAnnotationPairs(annotation_lines):
-    annotation_pairs = [[line.split()[0],
-                         np.array([np.array(list(map(int, box.split(',')))) for box in line.split()[1:]])]
-                        for line in annotation_lines]
-    return annotation_pairs
+def YoloAnnotationPair(annotation_line):
+    annotation_pair = [annotation_line.split()[0],
+                       np.array([np.array(list(map(int, box.split(',')))) for box in annotation_line.split()[1:]])]
+    return annotation_pair
 
 
-class YoloDataGenerator(keras.utils.Sequence):
+class YoloDataGenerator1(keras.utils.Sequence):
     def __init__(self, annotation_lines, input_shape, anchors, batch_size, num_classes, anchors_mask, do_aug):
         self.annotation_lines = annotation_lines
         self.input_shape = input_shape
@@ -55,8 +54,8 @@ class YoloDataGenerator(keras.utils.Sequence):
         for i in batch_indexes:
             i = i % self.num_samples
 
-            annotation_pair = YoloAnnotationPairs([self.annotation_lines[i]])
-            image, box = self.process_data(annotation_pair[0], self.input_shape, random=self.do_aug)
+            annotation_pair = YoloAnnotationPair(self.annotation_lines[i])
+            image, box = self.process_data(annotation_pair, self.input_shape, random=self.do_aug)
             image_data.append(preprocess_input(np.array(image)))
             box_data.append(box)
 
