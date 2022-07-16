@@ -9,9 +9,9 @@
 - [Blog](#Blog)
 - [Dataset](#Dataset)
 
-[Folder Structure](#Folder Structure)
+[Folder Structure](#Folder_Structure)
 
-[Sample Results](#Sample Results)
+[Sample_Results](#Sample_Results)
 
 [TODOs](#TODOs)
 
@@ -76,7 +76,7 @@ around view image
 - [Tongji Parking-slot Dataset 2.0: A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
 - [Context-Based Parking Slot Detect Dataset](https://github.com/dohoseok/context-based-parking-slot-detect)
 
-## Folder Structure
+## Folder_Structure
 
 Explanation about folders and files.
 
@@ -116,6 +116,6 @@ Explanation about folders and files.
 - predict0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
 - train0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
 
-## Sample Results
+## Sample_Results
 
 ## TODOs
