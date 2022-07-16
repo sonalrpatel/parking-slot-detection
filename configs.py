@@ -27,7 +27,7 @@ IMAGE_SIZE = (416, 416)
 # DIR_DATA is filled as a list to consider multiple dataset folders at same time
 DIR_DATA = ["data/demo/"]
 DIR_TRAIN = [d + "train/" for d in DIR_DATA]
-DIR_VALID = [d + "valid/" for d in DIR_DATA]
+DIR_VAL = [d + "valid/" for d in DIR_DATA]
 DIR_TEST = [d + "test/" for d in DIR_DATA]
 PATH_CLASSES = "data/ps_classes.txt"
 PATH_WEIGHT = "model_data/yolov3_ps.h5"

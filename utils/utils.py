@@ -12,6 +12,16 @@ def compose(*funcs):
         raise ValueError('Composition of empty sequence not supported.')
 
 
+def read_lines(annot_paths, data_paths):
+    all_lines = []
+    for i, path in enumerate(annot_paths):
+        with open(path) as f:
+            lines = f.readlines()
+        lines = [data_paths[i] + line for line in lines]
+        all_lines.extend(lines)
+    return all_lines
+
+
 # ===================================================================
 #   Convert image to RGB
 #   Currently only support RGB, all the image should convert to RGB before send into model

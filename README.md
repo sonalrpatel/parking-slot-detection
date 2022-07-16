@@ -9,9 +9,15 @@
 - [Blog](#Blog)
 - [Dataset](#Dataset)
 
+[Folder Structure](#Folder Structure)
+
+[Sample Results](#Sample Results)
+
+[TODOs](#TODOs)
+
 ## Introduction
 
-This repository is an implementation of parking slot detection in the around view image based on deep learning.
+This repository is an implementation of parking slot detection in AVM (around view images) using deep learning.
 The implementation is based on following [References](#References).
 
 ## References
@@ -69,3 +75,47 @@ around view image
 
 - [Tongji Parking-slot Dataset 2.0: A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
 - [Context-Based Parking Slot Detect Dataset](https://github.com/dohoseok/context-based-parking-slot-detect)
+
+## Folder Structure
+
+Explanation about folders and files.
+
+- data - contains the datasets, annotation files, and class details
+  - {folder name}
+    - {train} folder
+    - {val} folder
+    - {test} folder
+    - train_annotation.txt file
+    - val_annotation.txt file
+    - test_annotation.txt file
+  - xx_classes.txt file
+- dataloader
+  - dataloader.py - custom data generator
+- loss
+  - loss_functional.py - loss is written in a function
+  - loss_subclass.py - loss is written under a class
+- model
+  - darknet.py - backbone
+  - model_functional.py - functional model
+  - model_subclass.py - model sub-classing
+- model_yolo3_tf2 - yolov3 model from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- model_data - contains the .cfg, .weights, .h5, font files
+- model_img - contains the architecture images
+- notebook - contains the jupyter / google colab notebook file
+- utils
+  - callbacks.py
+  - dataloader.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+  - utils.py
+  - utils_bbox.py
+  - utils_metric.py
+- configs.py
+- convert.py
+- predict.py
+- train.py
+- convert0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- predict0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- train0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+
+## Sample Results
+
+## TODOs

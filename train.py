@@ -1,25 +1,13 @@
-from functools import partial
-
-import os
 import random
 import tensorflow as tf
-
-print(tf.__version__)
-
 from tensorflow.keras import Input, Model
 from tensorflow.keras.layers import Lambda
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
 
-# from model_yolo3_tf2.yolo import yolo_body
-# from model_yolo3_tf2.yolo_training import yolo_loss
-
 from model.model_functional import YOLOv3
 from loss.loss_functional import yolo_loss
-
-# TODO: following method is not working. need to check.
-# from dataloader.dataloader import YoloDataGenerator, YoloAnnotationPairs
-from dataloader.dataloader1 import YoloDataGenerator1
+from dataloader.dataloader import YoloDataGenerator
 
 from utils.callbacks import ExponentDecayScheduler, LossHistory, ModelCheckpoint
 from utils.utils import *
@@ -43,7 +31,7 @@ random.seed(seed_value)
 # =======================================================
 # 3. Set `numpy` pseudo-random generator at a fixed value
 # =======================================================
-# np.random.seed(seed_value)
+np.random.seed(seed_value)
 
 # =======================================================
 # 4. Set `tensorflow` pseudo-random generator at a fixed value
@@ -159,6 +147,7 @@ def _main():
     #   Occupy less memory, only fine-tune the network
     # =======================================================
     train_annot_paths = TRAIN_ANNOT_PATHS
+    train_data_paths = DIR_TRAIN
     init_epoch = TRAIN_FREEZE_INIT_EPOCH
     freeze_end_epoch = TRAIN_FREEZE_END_EPOCH
     train_freeze_batch_size = TRAIN_FREEZE_BATCH_SIZE
@@ -177,6 +166,7 @@ def _main():
     # Validation parameters
     # =======================================================
     val_annot_paths = VAL_ANNOT_PATHS
+    val_data_paths = DIR_VAL
     val_batch_size = VAL_BATCH_SIZE
     val_using = VAL_VALIDATION_USING
     val_split = VAL_VALIDATION_SPLIT
@@ -273,47 +263,21 @@ def _main():
         # =======================================================
         #   Annotation lines
         # =======================================================
-        def read_lines(paths, mode):
-            all_lines = []
-            for path in paths:
-                with open(path) as f:
-                    lines = f.readlines()
-                lines = [path.rsplit('/', 1)[0] + '/' + str(mode) + '/' + line for line in lines]
-                all_lines.extend(lines)
-            return all_lines
-
-        train_lines = read_lines(train_annot_paths, 'train')
+        train_lines = read_lines(train_annot_paths, train_data_paths)
         if val_using == "VAL":
-            val_lines = read_lines(val_annot_paths, 'val')
+            val_lines = read_lines(val_annot_paths, val_data_paths)
         if val_using == "TRAIN":
             val_lines = random.sample(train_lines, int(len(train_lines) * val_split))
             train_lines = [line for line in train_lines if line not in val_lines]
 
         # =======================================================
-        #   Annotation pairs
-        # =======================================================
-        # TODO: following method is not working. need to check.
-        # train_annotation_pairs = YoloAnnotationPairs(train_annot_paths, 'train')
-        # if val_using == "VAL":
-        #     val_annotation_pairs = YoloAnnotationPairs(val_annot_paths, 'val')
-        # if val_using == "TRAIN":
-        #     val_annotation_pairs = random.sample(train_annotation_pairs, int(len(train_annotation_pairs) * val_split))
-        #     train_annotation_pairs = [pair for pair in train_annotation_pairs if pair not in val_annotation_pairs]
-
-        # =======================================================
         #   Data loaders
         # =======================================================
-        # TODO: following method is not working. need to check.
-        # train_dataloader = YoloDataGenerator(train_annotation_pairs, image_shape, anchors, train_freeze_batch_size,
-        #                                      num_classes, anchors_mask, do_aug=False)
-        # if val_using == "VAL" or val_using == "TRAIN":
-        #     val_dataloader = YoloDataGenerator(val_annotation_pairs, image_shape, anchors, val_batch_size,
-        #                                        num_classes, anchors_mask, do_aug=False)
-        train_dataloader = YoloDataGenerator1(train_lines, image_shape, anchors, train_freeze_batch_size,
-                                              num_classes, anchors_mask, do_aug=False)
+        train_dataloader = YoloDataGenerator(train_lines, image_shape, anchors, train_freeze_batch_size,
+                                             num_classes, anchors_mask, do_aug=False)
         if val_using == "VAL" or val_using == "TRAIN":
-            val_dataloader = YoloDataGenerator1(val_lines, image_shape, anchors, val_batch_size,
-                                                num_classes, anchors_mask, do_aug=False)
+            val_dataloader = YoloDataGenerator(val_lines, image_shape, anchors, val_batch_size,
+                                               num_classes, anchors_mask, do_aug=False)
 
         # =======================================================
         #   Model fit
@@ -363,11 +327,11 @@ def _main():
         #   Data loaders
         #   Note that more GPU memory is required after unfreezing the body
         # =======================================================
-        train_dataloader = YoloDataGenerator1(train_lines, image_shape, anchors, train_unfreeze_batch_size,
-                                              num_classes, anchors_mask, do_aug=False)
+        train_dataloader = YoloDataGenerator(train_lines, image_shape, anchors, train_unfreeze_batch_size,
+                                             num_classes, anchors_mask, do_aug=False)
         if val_using == "VAL" or val_using == "TRAIN":
-            val_dataloader = YoloDataGenerator1(val_lines, image_shape, anchors, val_batch_size,
-                                                num_classes, anchors_mask, do_aug=False)
+            val_dataloader = YoloDataGenerator(val_lines, image_shape, anchors, val_batch_size,
+                                               num_classes, anchors_mask, do_aug=False)
 
         # =======================================================
         #   Model fit
