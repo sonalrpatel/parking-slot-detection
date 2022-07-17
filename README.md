@@ -9,9 +9,9 @@
 - [Blog](#Blog)
 - [Dataset](#Dataset)
 
-[Folder Structure](#Folder_Structure)
+[Folder Structure](#Folder-Structure)
 
-[Sample_Results](#Sample_Results)
+[Sample Results](#Sample-Results)
 
 [TODOs](#TODOs)
 
@@ -73,49 +73,59 @@ parking lot image
 ### Dataset
 around view image
 
-- [Tongji Parking-slot Dataset 2.0: A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
+- [ps2.0] [Tongji Parking-slot Dataset 2.0: A Large-scale Benchmark Dataset](https://cslinzhang.github.io/deepps/)
 - [Context-Based Parking Slot Detect Dataset](https://github.com/dohoseok/context-based-parking-slot-detect)
 
-## Folder_Structure
+## Folder Structure
 
 Explanation about folders and files.
 
-- data - contains the datasets, annotation files, and class details
-  - {folder name}
-    - {train} folder
-    - {val} folder
-    - {test} folder
-    - train_annotation.txt file
-    - val_annotation.txt file
-    - test_annotation.txt file
-  - xx_classes.txt file
-- dataloader
+- __data__ - contains the datasets, annotation files, and class details
+  - {dataset folder name}
+    - train
+    - val
+    - test
+    - train_annotation.txt
+    - val_annotation.txt
+    - test_annotation.txt
+  - ps_classes.txt
+- __dataloader__
   - dataloader.py - custom data generator
-- loss
+- __loss__
   - loss_functional.py - loss is written in a function
   - loss_subclass.py - loss is written under a class
-- model
+- __model__
   - darknet.py - backbone
   - model_functional.py - functional model
   - model_subclass.py - model sub-classing
-- model_yolo3_tf2 - yolov3 model from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
-- model_data - contains the .cfg, .weights, .h5, font files
-- model_img - contains the architecture images
-- notebook - contains the jupyter / google colab notebook file
-- utils
+- __model_yolo3_tf2__ - yolov3 model reference from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- __model_data__ - contains the .cfg, .weights, .h5, font files
+- __model_img__ - contains the architecture images
+- __notebook__ - contains the jupyter / google colab notebook file
+- __utils__
   - callbacks.py
-  - dataloader.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+  - dataloader.py - reference from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
   - utils.py
   - utils_bbox.py
   - utils_metric.py
-- configs.py
-- convert.py
-- predict.py
-- train.py
-- convert0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
-- predict0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
-- train0.py from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- __configs.py__
+- __convert.py__
+- __predict.py__
+- __train.py__
+- __convert0.py__ - reference from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- __predict0.py__ - reference from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- __train0.py__ - reference from [yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+- __psmat2txt.py__ - generates annotations in __YOLO v3 Keras TXT__ format from __mat__ files
+- __visbbox.py__ - visualise bounding boxes
 
-## Sample_Results
+## Sample Results
+
+Sample results with [VPS-Net](https://github.com/weili1457355863/VPS-Net) as reference
+
+![Parking slot head](data/demo/out/20160725-3-97.jpg)
+![Parking slot head](data/demo/out/20160725-3-647.jpg)
 
 ## TODOs
+
+- find complete parking slot
+- improve performance by referring other papers

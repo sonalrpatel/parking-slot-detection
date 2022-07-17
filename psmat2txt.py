@@ -152,5 +152,5 @@ def _main(args):
 
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
-    # python psmat2txt.py D:/01_PythonAIML/00_Datasets/ps2.0/training/ data/ps/train_annotations.txt
+    # python psmat2txt.py data/ps2.0/training/ data/ps/train_annotations.txt
     _main(parser.parse_args())

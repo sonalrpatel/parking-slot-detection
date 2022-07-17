@@ -11,13 +11,12 @@ import colorsys
 import argparse
 from tqdm import tqdm
 from PIL import ImageDraw, ImageFont
+from access_dict_by_dot import AccessDictByDot
 from tensorflow.keras.layers import Input, Lambda
 from tensorflow.keras.models import Model
-from access_dict_by_dot import AccessDictByDot
-
-from model_yolo3_tf2.yolo import yolo_body
 
 from model.model_functional import YOLOv3
+
 from utils.utils import *
 from utils.utils_bbox import *
 from configs import *
@@ -108,8 +107,7 @@ class YoloDecode(object):
         # =====================================================================
         #   Create a yolo model
         # =====================================================================
-        self.model_body = yolo_body((None, None, 3), self.anchors_mask, self.num_classes)
-        # self.model_body = YOLOv3((None, None, 3), self.num_classes)
+        self.model_body = YOLOv3((None, None, 3), self.num_classes)
 
         # =====================================================================
         #   Load model weights
@@ -118,6 +116,7 @@ class YoloDecode(object):
         assert weight_path.endswith('.h5'), 'Keras model or weights must be a .h5 file.'
         assert os.path.exists(weight_path), 'Keras model or weights file does not exist.'
 
+        # self.model_body.load_weights(weight_path)  # loads weights without comparing the layer names
         self.model_body.load_weights(weight_path, by_name=True, skip_mismatch=True)
         print('{} model, anchors, and classes loaded.'.format(weight_path))
 
@@ -182,11 +181,11 @@ class YoloDecode(object):
     # =====================================================================
     #   Draw boxes on input image
     # =====================================================================
-    def __draw_boxes(self, image, out_boxes, out_scores, out_classes):
+    def __draw_boxes(self, image, out_boxes, out_scores, out_classes, mode=None):
         # =====================================================================
         #   Set font and border thickness
         # =====================================================================
-        font = ImageFont.truetype(font='font/simhei.ttf', size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
+        font = ImageFont.truetype(font='model_data/simhei.ttf', size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
         thickness = int(max((image.size[0] + image.size[1]) // np.mean(self.input_shape), 1))
 
         # =====================================================================
@@ -208,7 +207,8 @@ class YoloDecode(object):
             draw = ImageDraw.Draw(image)
             label_size = draw.textsize(label, font)
             label = label.encode('utf-8')
-            print(label, top, left, bottom, right)
+            if mode == "predict":
+                print(label, top, left, bottom, right)
 
             if top - label_size[1] >= 0:
                 text_origin = np.array([left, top - label_size[1]])
@@ -219,6 +219,7 @@ class YoloDecode(object):
                 draw.rectangle([left + i, top + i, right - i, bottom - i], outline=self.colors[c])
             draw.rectangle([tuple(text_origin), tuple(text_origin + label_size)], fill=self.colors[c])
             draw.text(text_origin, str(label, 'UTF-8'), fill=(0, 0, 0), font=font)
+
             del draw
         return image
 
@@ -238,13 +239,13 @@ class YoloDecode(object):
         #   Feed the image into the network to make predictions!
         # =====================================================================
         out_boxes, out_scores, out_classes = self.model_decode([image_data, input_image_shape])
-        if mode != "dir_predict":
+        if mode == "predict":
             print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
 
         # =====================================================================
         #   Draw bounding boxes on the image using labels
         # =====================================================================
-        self.__draw_boxes(image, out_boxes, out_scores, out_classes)
+        self.__draw_boxes(image, out_boxes, out_scores, out_classes, mode)
         return image
 
     # =====================================================================
@@ -320,7 +321,7 @@ def _main(args):
     #   'dir_predict' means to traverse the folder to detect and save. By default, the img folder is traversed and
     #       the img_out folder is saved. For details, see the notes below.
     # =====================================================================
-    mode = "predict"
+    mode = "dir_predict"
 
     # =====================================================================
     #   video_origin_path is used to specify the path of the video, when video_origin_path = 0, it means to detect
@@ -350,7 +351,7 @@ def _main(args):
     #   dir_origin_path and dir_save_path are only valid when mode = 'dir_predict'
     # =====================================================================
     dir_origin_path = "data/demo/train/"
-    dir_save_path = "data_out/"
+    dir_save_path = "data/demo/out/"
 
     # =====================================================================
     #   If you want to save the detected image, use image_out.save("img.jpg") to save it, and modify it directly in
@@ -369,7 +370,7 @@ def _main(args):
         import os
         image_path = args.image_path if args.image_path is not None else "data/sample/apple.jpg"
         image = Image.open(os.path.join(os.path.dirname(__file__), image_path))
-        image_out = yolo.detect_image(image)
+        image_out = yolo.detect_image(image, mode)
         image_out.show()
 
     elif mode == "video":
@@ -433,7 +434,7 @@ def _main(args):
                     ('.bmp', '.dib', '.png', '.jpg', '.jpeg', '.pbm', '.pgm', '.ppm', '.tif', '.tiff')):
                 image_path = os.path.join(dir_origin_path, img_name)
                 image = Image.open(image_path)
-                image_out = yolo.detect_image(image, mode)
+                image_out = yolo.detect_image(image)
                 if not os.path.exists(dir_save_path):
                     os.makedirs(dir_save_path)
                 image_out.save(os.path.join(dir_save_path, img_name))
@@ -445,11 +446,11 @@ def _main(args):
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
     # python predict.py [-i] <image_path>
-    # python predict.py -w model_data/trained_weights_final.h5 -c data/ps_classes.txt -i data/demo/train/20160725-3-1.jpg
+    # python predict.py -w model_data/trained_weight.h5 -c data/ps_classes.txt -i data/demo/train/20160725-3-1.jpg
     dictionary = {
-        'weight_path' : "model_data/trained_weights_final.h5",
-        'classes_path' : "data/ps_classes.txt",
-        'image_path' : "data/demo/train/20160725-3-1.jpg"
+        'weight_path': "model_data/trained_weight.h5",
+        'classes_path': "data/ps_classes.txt",
+        'image_path': "data/demo/train/20160725-3-14.jpg"
     }
 
     args = AccessDictByDot.load(dictionary)

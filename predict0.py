@@ -8,9 +8,9 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from PIL import Image
+from access_dict_by_dot import AccessDictByDot
 
 from model_yolo3_tf2.yolo_pred import YOLO
-from access_dict_by_dot import AccessDictByDot
 
 gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
 for gpu in gpus:
@@ -139,7 +139,7 @@ def _main(args):
 
 if __name__ == '__main__':
     dictionary = {
-        'weight_path': "C:/Users/pso9kor/Downloads/ep020-loss11.630-val_loss12.243.h5",
+        'weight_path': "model_data/trained_weight_0.h5",
         'classes_path': "data/ps_classes.txt",
         'image_path': "data/demo/train/20160725-3-1.jpg"
     }
