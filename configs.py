@@ -41,7 +41,7 @@ LOG_DIR2 = "logs/"  # server link to store the checkpoint
 # TRAIN options
 TRAIN_ANNOT_PATHS = [d + "train_annotations.txt" for d in DIR_DATA]
 TRAIN_YOLO_TINY = False
-TRAIN_SAVE_BEST_ONLY = True  # saves only best model according validation loss (True recommended)
+TRAIN_SAVE_BEST_ONLY = True  # saves only best model according to validation loss (True recommended)
 TRAIN_SAVE_CHECKPOINT = False  # saves all best validated checkpoints in training process (False recommended)
 TRAIN_FROM_CHECKPOINT = False
 TRAIN_TRANSFER = True
