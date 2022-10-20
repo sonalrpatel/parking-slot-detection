@@ -130,5 +130,5 @@ def _main(args):
 
 if __name__ == '__main__':
     # run following command (as per current folder structure) on terminal
-    # python convert.py data/yolov3.weights data/yolov3_ps.h5
+    # python convert.py model_data/yolov3.weights model_data/yolov3_ps.h5
     _main(parser.parse_args())

@@ -29,7 +29,7 @@ def draw_boxes(image, annotation):
     # =====================================================================
     #   Set font and border thickness
     # =====================================================================
-    font = ImageFont.truetype(font='font/simhei.ttf', size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
+    font = ImageFont.truetype(font='model_data/simhei.ttf', size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
     thickness = int(max((image.size[0] + image.size[1]) // np.mean(image.size), 1))
 
     # =====================================================================
@@ -70,7 +70,7 @@ def _main(args):
     image = Image.open(args.image_path)
 
     annotation_lines = read_lines(args.annotation_txt_path)
-    annotation_pairs = [[args.annotation_txt_path.rsplit('/', 1)[0] + '/' + line.split()[0],
+    annotation_pairs = [[args.annotation_txt_path.rsplit('/', 1)[0] + '/train/' + line.split()[0],
                          np.array([list(map(int, box.split(','))) for box in line.split()[1:]])]
                         for line in annotation_lines]
 
@@ -91,4 +91,12 @@ if __name__ == '__main__':
     # python visbbox.py data/demo/train/20160725-7-299.jpg data/demo/train_annotations.txt
     # python visbbox.py data/demo/train/20160725-5-652.jpg data/demo/train_annotations.txt
     # python visbbox.py data/demo/train/20160816-1-3003.jpg data/demo/train_annotations.txt
+
+    # parser = argparse.ArgumentParser(description='Pass args to visbbox')
+    # parser.add_argument('--image_path', metavar='path', help='the path to image',
+    #                     default='data/demo/train/20160725-3-97.jpg')
+    # parser.add_argument('--annotation_txt_path', metavar='path', help='path to annotation file',
+    #                     default='data/demo/train_annotations.txt')
+    # args = parser.parse_args()
+
     _main(parser.parse_args())
