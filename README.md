@@ -122,8 +122,8 @@ Explanation about folders and files.
 
 Sample results of parking slot head detection with [VPS-Net](https://github.com/weili1457355863/VPS-Net) as reference
 
-![Parking slot head](data/demo/out/20160725-3-97.jpg)
-![Parking slot head](data/demo/out/20160725-3-647.jpg)
+![Parking slot head](outputs/demo/20160725-3-97.jpg)
+![Parking slot head](outputs/demo/20160725-3-647.jpg)
 
 ## TODOs
 
